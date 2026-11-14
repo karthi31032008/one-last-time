@@ -4,6 +4,8 @@ import json
 import logging
 from pathlib import Path
 from datetime import datetime, timezone
+import firebase_admin
+from firebase_admin import credentials, firestore
 
 from flask import Flask, render_template, jsonify, request
 
