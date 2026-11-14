@@ -1394,14 +1394,335 @@ document.addEventListener("DOMContentLoaded", function() {
 </script>
 
 
+
 <section id="market" class="detail-section">
-    <div class="section-heading">
-        <small>MODULE 05</small>
-        <h2>Market Intelligence</h2>
+
+<style>
+.market-ai {
+    background:linear-gradient(135deg,#172719,#091810);
+    border:1px solid #49643a;
+    border-radius:16px;
+    padding:24px;
+    margin-top:22px;
+    color:#eff9e9;
+}
+.market-ai .tag {
+    color:#b8df70;
+    font-size:10px;
+    letter-spacing:1.5px;
+}
+.market-ai p {
+    color:#b1c5a5;
+    font-size:12px;
+    line-height:1.8;
+}
+.market-controls {
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:14px;
+    margin-top:20px;
+}
+.market-controls label {
+    display:block;
+    color:#b1c5a5;
+    font-size:12px;
+    margin-bottom:8px;
+}
+.market-controls input,
+.market-controls select {
+    width:100%;
+    padding:12px;
+    background:#0a1b10;
+    border:1px solid #526c40;
+    color:white;
+    border-radius:8px;
+}
+.market-btn {
+    width:100%;
+    padding:14px;
+    margin-top:17px;
+    border:0;
+    border-radius:8px;
+    background:#a5d65d;
+    color:#17220b;
+    font-weight:bold;
+    cursor:pointer;
+}
+.market-grid {
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:14px;
+    margin-top:22px;
+}
+.market-card {
+    background:#1b3020;
+    border:1px solid #49643a;
+    border-radius:11px;
+    padding:18px;
+}
+.market-card small {
+    color:#b4cb91;
+    font-size:10px;
+}
+.market-card h2 {
+    color:#c3ed7d;
+    font-size:24px;
+    margin:12px 0;
+}
+.market-status {
+    padding:14px;
+    margin-top:16px;
+    background:#102116;
+    border-radius:8px;
+    color:#c1e7a2;
+    font-size:12px;
+    line-height:1.8;
+}
+.market-note {
+    padding:15px;
+    margin-top:18px;
+    background:#102116;
+    border-left:3px solid #a5d65d;
+    color:#b1c5a5;
+    font-size:11px;
+    line-height:1.8;
+}
+@media(max-width:650px) {
+    .market-controls,.market-grid {
+        grid-template-columns:1fr;
+    }
+}
+</style>
+
+<div class="section-heading">
+    <small>MODULE 05 / NASA AGRICULTURAL OUTLOOK</small>
+    <h2>Market & Agricultural Outlook Intelligence</h2>
+</div>
+
+<p>
+    Explore environmental conditions that may influence
+    agricultural production and harvest planning.
+</p>
+
+<div class="market-ai">
+
+    <div class="tag">EARTH DATA · AGRICULTURAL OUTLOOK</div>
+    <h2>Crop Outlook Analyzer</h2>
+    <p>
+        Analyze recent NASA climate observations for a selected
+        crop and geographic location.
+    </p>
+
+    <div class="market-controls">
+        <div>
+            <label>Latitude</label>
+            <input id="marketLat" type="number"
+                   value="11.0168" step="any">
+        </div>
+
+        <div>
+            <label>Longitude</label>
+            <input id="marketLon" type="number"
+                   value="76.9558" step="any">
+        </div>
+
+        <div>
+            <label>Select Crop</label>
+            <select id="marketCrop">
+                <option value="Rice">Rice</option>
+                <option value="Maize">Maize</option>
+                <option value="Cotton">Cotton</option>
+                <option value="Groundnut">Groundnut</option>
+                <option value="Millet">Millet</option>
+                <option value="Wheat">Wheat</option>
+                <option value="Sugarcane">Sugarcane</option>
+            </select>
+        </div>
     </div>
-    <p>Explore agricultural statistics, crop production and market information.</p>
-    <div class="placeholder">USDA data integration pending</div>
+
+    <button class="market-btn"
+            id="marketButton"
+            onclick="runMarketOutlook()">
+        GENERATE AGRICULTURAL OUTLOOK →
+    </button>
+
+    <div id="marketStatus" class="market-status">
+        Waiting for NASA POWER observations...
+    </div>
+
+    <div id="marketResults" style="display:none">
+
+        <div class="market-grid">
+
+            <div class="market-card">
+                <small>AVERAGE TEMPERATURE</small>
+                <h2 id="marketTemp">--</h2>
+                <p>°C</p>
+            </div>
+
+            <div class="market-card">
+                <small>RAINFALL ACCUMULATION</small>
+                <h2 id="marketRain">--</h2>
+                <p>mm / 30 days</p>
+            </div>
+
+            <div class="market-card">
+                <small>AVERAGE HUMIDITY</small>
+                <h2 id="marketHumidity">--</h2>
+                <p>Percent</p>
+            </div>
+
+            <div class="market-card">
+                <small>AVERAGE WIND SPEED</small>
+                <h2 id="marketWind">--</h2>
+                <p>m/s</p>
+            </div>
+
+            <div class="market-card">
+                <small>OBSERVATION RECORDS</small>
+                <h2 id="marketRecords">--</h2>
+                <p>Available daily records</p>
+            </div>
+
+            <div class="market-card">
+                <small>SELECTED CROP</small>
+                <h2 id="marketCropResult">--</h2>
+                <p>Analysis target</p>
+            </div>
+
+        </div>
+
+        <div class="market-status" id="marketInsight"></div>
+
+        <div class="market-note">
+            <strong>Important:</strong> This is a climate-based
+            agricultural outlook, not a market-price prediction,
+            crop-yield prediction or profitability score.
+            Actual market prices are not supplied by NASA POWER.
+        </div>
+
+    </div>
+
+</div>
 </section>
+
+<script>
+async function runMarketOutlook() {
+
+    const lat = Number(document.getElementById("marketLat").value);
+    const lon = Number(document.getElementById("marketLon").value);
+    const crop = document.getElementById("marketCrop").value;
+
+    const status = document.getElementById("marketStatus");
+    const results = document.getElementById("marketResults");
+    const button = document.getElementById("marketButton");
+
+    if (!Number.isFinite(lat) || !Number.isFinite(lon) ||
+        lat < -90 || lat > 90 || lon < -180 || lon > 180) {
+        status.textContent = "Enter valid geographic coordinates.";
+        return;
+    }
+
+    button.disabled = true;
+    results.style.display = "none";
+    status.textContent = "Retrieving NASA POWER observations...";
+
+    try {
+
+        const end = new Date();
+        end.setUTCDate(end.getUTCDate() - 5);
+
+        const start = new Date(end);
+        start.setUTCDate(start.getUTCDate() - 29);
+
+        const fmt = d => d.toISOString()
+            .slice(0,10).replaceAll("-","");
+
+        const url = new URL(
+            "https://power.larc.nasa.gov/api/temporal/daily/point"
+        );
+
+        url.search = new URLSearchParams({
+            parameters: "T2M,PRECTOTCORR,RH2M,WS2M",
+            community: "AG",
+            longitude: lon,
+            latitude: lat,
+            start: fmt(start),
+            end: fmt(end),
+            format: "JSON",
+            "time-standard": "UTC"
+        });
+
+        const response = await fetch(url);
+
+        if (!response.ok) {
+            throw new Error("NASA API error: " + response.status);
+        }
+
+        const json = await response.json();
+        const p = json.properties.parameter;
+
+        function validValues(obj) {
+            return Object.values(obj)
+                .map(Number)
+                .filter(v => Number.isFinite(v) && v > -900);
+        }
+
+        const temp = validValues(p.T2M);
+        const rain = validValues(p.PRECTOTCORR);
+        const humidity = validValues(p.RH2M);
+        const wind = validValues(p.WS2M);
+
+        if (!temp.length || !rain.length ||
+            !humidity.length || !wind.length) {
+            throw new Error("Incomplete NASA observations.");
+        }
+
+        const avg = arr =>
+            arr.reduce((a,b) => a+b,0) / arr.length;
+
+        const totalRain = rain.reduce((a,b) => a+b,0);
+
+        document.getElementById("marketTemp").textContent =
+            avg(temp).toFixed(2) + " °C";
+
+        document.getElementById("marketRain").textContent =
+            totalRain.toFixed(2) + " mm";
+
+        document.getElementById("marketHumidity").textContent =
+            avg(humidity).toFixed(2) + "%";
+
+        document.getElementById("marketWind").textContent =
+            avg(wind).toFixed(2) + " m/s";
+
+        document.getElementById("marketRecords").textContent =
+            temp.length;
+
+        document.getElementById("marketCropResult").textContent = crop;
+
+        document.getElementById("marketInsight").textContent =
+            "NASA climate observations for " + crop +
+            ": average temperature " + avg(temp).toFixed(2) +
+            " °C, accumulated rainfall " + totalRain.toFixed(2) +
+            " mm, humidity " + avg(humidity).toFixed(2) +
+            "% and wind speed " + avg(wind).toFixed(2) +
+            " m/s. These are environmental observations, not a crop price or yield forecast.";
+
+        results.style.display = "block";
+
+        status.textContent =
+            "NASA POWER agricultural outlook data retrieved successfully.";
+
+    } catch(error) {
+
+        status.textContent = "Data error: " + error.message;
+
+    } finally {
+        button.disabled = false;
+    }
+}
+</script>
+
 
 <section id="sources" class="detail-section">
     <div class="section-heading">
