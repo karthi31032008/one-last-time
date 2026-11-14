@@ -174,14 +174,7 @@ def market_intelligence():
 def data_intelligence():
     return render_template("data_intelligence.html")
 
-# GAEZ STATUS
-@app.route("/api/gaez-status", methods=["GET"])
-def gaez_status():
-    return jsonify({
-        "status": "pending",
-        "dataset": "FAO GAEZ",
-        "message": "GAEZ dataset integration is pending"
-    })
+
 
 
 # ERROR HANDLERS
