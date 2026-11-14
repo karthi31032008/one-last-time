@@ -169,14 +169,253 @@
 </section>
 
 <!-- MODULE SECTIONS -->
+
 <section id="suitability" class="detail-section">
+
     <div class="section-heading">
-        <small>MODULE 01</small>
+        <small>MODULE 01 / NASA EARTH DATA</small>
         <h2>Crop Suitability Intelligence</h2>
     </div>
-    <p>Analyze crop suitability using FAO Global Agro-Ecological Zones data.</p>
-    <div class="placeholder">GAEZ data integration pending</div>
+
+    <p>
+        Explore crop climate indicators using live NASA POWER
+        environmental observations.
+    </p>
+
+    <div class="crop-demo">
+        <h3>🌱 NASA Crop Climate Intelligence</h3>
+
+        <div class="crop-grid">
+            <div>
+                <label>Latitude</label>
+                <input id="cropLat" type="number" value="11.0168" step="any">
+            </div>
+
+            <div>
+                <label>Longitude</label>
+                <input id="cropLon" type="number" value="76.9558" step="any">
+            </div>
+
+            <div>
+                <label>Select Crop</label>
+                <select id="cropType">
+                    <option value="rice">Rice</option>
+                    <option value="wheat">Wheat</option>
+                    <option value="maize">Maize</option>
+                    <option value="cotton">Cotton</option>
+                    <option value="groundnut">Groundnut</option>
+                    <option value="millet">Millet</option>
+                </select>
+            </div>
+        </div>
+
+        <button onclick="runCropClimateDemo()">
+            Analyze Crop →
+        </button>
+
+        <p id="cropStatus">Ready to analyze.</p>
+
+        <div id="cropResults" style="display:none">
+            <h3>Climate Assessment</h3>
+            <h1 id="cropScore">--%</h1>
+            <p id="cropVerdict"></p>
+
+            <div class="crop-grid">
+                <div class="crop-metric">
+                    Temperature
+                    <h2 id="cropTemp">--</h2>
+                </div>
+
+                <div class="crop-metric">
+                    Rainfall
+                    <h2 id="cropRain">--</h2>
+                </div>
+
+                <div class="crop-metric">
+                    Humidity
+                    <h2 id="cropHumidity">--</h2>
+                </div>
+            </div>
+
+            <p id="cropAdvice"></p>
+        </div>
+
+        <small>
+            Data source: NASA POWER API.
+            Experimental climate indicator, not official GAEZ suitability.
+        </small>
+    </div>
 </section>
+
+<style>
+.crop-demo {
+    background:linear-gradient(135deg,#10291e,#071711);
+    border:1px solid #24543b;
+    border-radius:16px;
+    padding:24px;
+    color:#e9f7ed;
+    margin-top:20px;
+}
+.crop-demo h3 {color:#54e89a;}
+.crop-demo label {
+    display:block;
+    margin-bottom:8px;
+    color:#a8c8b3;
+}
+.crop-grid {
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(170px,1fr));
+    gap:15px;
+    margin:20px 0;
+}
+.crop-demo input,.crop-demo select {
+    width:100%;
+    padding:12px;
+    box-sizing:border-box;
+    background:#091b12;
+    color:white;
+    border:1px solid #37684b;
+    border-radius:8px;
+}
+.crop-demo button {
+    background:#20bd70;
+    color:#062014;
+    padding:13px 22px;
+    border:0;
+    border-radius:8px;
+    font-weight:bold;
+    cursor:pointer;
+}
+.crop-metric {
+    background:#153425;
+    padding:15px;
+    border-radius:10px;
+}
+</style>
+
+<script>
+async function runCropClimateDemo() {
+    const status = document.getElementById("cropStatus");
+    const results = document.getElementById("cropResults");
+
+    const lat = Number(document.getElementById("cropLat").value);
+    const lon = Number(document.getElementById("cropLon").value);
+    const crop = document.getElementById("cropType").value;
+
+    if (!Number.isFinite(lat) || !Number.isFinite(lon) ||
+        lat < -90 || lat > 90 || lon < -180 || lon > 180) {
+        status.textContent = "Enter valid coordinates.";
+        return;
+    }
+
+    status.textContent = "Connecting to NASA POWER...";
+    results.style.display = "none";
+
+    const end = new Date();
+    end.setUTCDate(end.getUTCDate() - 5);
+
+    const start = new Date(end);
+    start.setUTCDate(start.getUTCDate() - 29);
+
+    const fmt = d => d.getUTCFullYear() +
+        String(d.getUTCMonth()+1).padStart(2,"0") +
+        String(d.getUTCDate()).padStart(2,"0");
+
+    const url = new URL(
+        "https://power.larc.nasa.gov/api/temporal/daily/point"
+    );
+
+    url.search = new URLSearchParams({
+        parameters:"T2M,PRECTOTCORR,RH2M",
+        community:"AG",
+        longitude:lon,
+        latitude:lat,
+        start:fmt(start),
+        end:fmt(end),
+        format:"JSON"
+    });
+
+    try {
+        const response = await fetch(url);
+        if (!response.ok) throw new Error("NASA API error: "+response.status);
+
+        const data = await response.json();
+        const p = data.properties.parameter;
+
+        function values(obj) {
+            return Object.values(obj)
+                .map(Number)
+                .filter(v => Number.isFinite(v) && v > -900);
+        }
+
+        const t = values(p.T2M);
+        const r = values(p.PRECTOTCORR);
+        const h = values(p.RH2M);
+
+        if (!t.length || !r.length || !h.length)
+            throw new Error("Incomplete NASA data.");
+
+        const avg = a => a.reduce((x,y)=>x+y,0)/a.length;
+
+        const temp = avg(t);
+        const rain = r.reduce((x,y)=>x+y,0);
+        const humidity = avg(h);
+
+        const ranges = {
+            rice:{t:[22,32],r:[80,300],h:[55,90]},
+            wheat:{t:[10,25],r:[10,100],h:[30,65]},
+            maize:{t:[18,32],r:[50,180],h:[40,80]},
+            cotton:{t:[21,35],r:[30,150],h:[35,70]},
+            groundnut:{t:[20,32],r:[40,150],h:[40,70]},
+            millet:{t:[20,35],r:[10,100],h:[25,65]}
+        };
+
+        function score(v, range, margin) {
+            if(v >= range[0] && v <= range[1]) return 100;
+            const distance = v < range[0]
+                ? range[0]-v : v-range[1];
+            return Math.max(0,100-distance/margin*100);
+        }
+
+        const cr = ranges[crop];
+
+        const finalScore = Math.round(
+            score(temp,cr.t,10)*0.45 +
+            score(rain,cr.r,100)*0.35 +
+            score(humidity,cr.h,25)*0.20
+        );
+
+        document.getElementById("cropScore").textContent =
+            finalScore+"%";
+
+        document.getElementById("cropVerdict").textContent =
+            finalScore >= 75 ? "Favourable climate indicators" :
+            finalScore >= 50 ? "Moderate climate indicators" :
+            "Climate conditions need attention";
+
+        document.getElementById("cropTemp").textContent =
+            temp.toFixed(1)+" °C";
+
+        document.getElementById("cropRain").textContent =
+            rain.toFixed(1)+" mm";
+
+        document.getElementById("cropHumidity").textContent =
+            humidity.toFixed(1)+" %";
+
+        document.getElementById("cropAdvice").textContent =
+            "Assessment uses recent 30-day climate data. " +
+            "Soil properties, irrigation and crop growth stage " +
+            "must also be evaluated before farming decisions.";
+
+        results.style.display = "block";
+        status.textContent = "NASA POWER data retrieved successfully.";
+
+    } catch(error) {
+        status.textContent = "Data error: "+error.message;
+    }
+}
+</script>
+
 
 <section id="water" class="detail-section">
     <div class="section-heading">
