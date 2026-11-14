@@ -788,14 +788,378 @@ async function runWaterIntelligence() {
 </script>
 
 
+
 <section id="climate" class="detail-section">
-    <div class="section-heading">
-        <small>MODULE 03</small>
-        <h2>Climate Analysis</h2>
+
+<style>
+.climate-dashboard {
+    background:linear-gradient(135deg,#10251f,#071711);
+    border:1px solid #315b45;
+    border-radius:16px;
+    padding:24px;
+    margin-top:22px;
+    color:#eafff0;
+}
+.climate-label {
+    color:#62e5a0;
+    font-size:10px;
+    letter-spacing:1.5px;
+}
+.climate-dashboard p {
+    color:#a5c2ae;
+    font-size:12px;
+    line-height:1.8;
+}
+.climate-inputs {
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:14px;
+    margin-top:20px;
+}
+.climate-inputs label {
+    display:block;
+    color:#a5c2ae;
+    font-size:12px;
+    margin-bottom:8px;
+}
+.climate-inputs input {
+    width:100%;
+    padding:13px;
+    background:#071810;
+    color:white;
+    border:1px solid #38684b;
+    border-radius:8px;
+}
+.climate-btn {
+    width:100%;
+    padding:14px;
+    margin-top:16px;
+    background:#48d994;
+    color:#062012;
+    border:0;
+    border-radius:8px;
+    font-weight:bold;
+    cursor:pointer;
+}
+.climate-metrics {
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:14px;
+    margin-top:22px;
+}
+.climate-card {
+    background:#102e20;
+    border:1px solid #315b45;
+    border-radius:11px;
+    padding:18px;
+}
+.climate-card small {
+    color:#91b89e;
+    font-size:10px;
+}
+.climate-card h2 {
+    color:#63e9a1;
+    font-size:24px;
+    margin:12px 0;
+}
+.climate-chart {
+    height:190px;
+    display:flex;
+    align-items:flex-end;
+    gap:4px;
+    padding:15px 5px 0;
+    border-bottom:1px solid #42674d;
+}
+.climate-bar-wrap {
+    flex:1;
+    height:100%;
+    display:flex;
+    align-items:flex-end;
+    min-width:2px;
+}
+.climate-bar {
+    width:100%;
+    background:linear-gradient(#8bdcff,#287db2);
+    border-radius:4px 4px 0 0;
+    min-height:2px;
+}
+.climate-status {
+    padding:13px;
+    background:#0b2115;
+    border-radius:8px;
+    margin-top:16px;
+    color:#a7e9bf;
+    font-size:12px;
+}
+.climate-note {
+    padding:15px;
+    margin-top:18px;
+    background:#0b2115;
+    border-left:3px solid #49d994;
+    color:#a5c2ae;
+    font-size:11px;
+    line-height:1.8;
+}
+@media(max-width:650px) {
+    .climate-metrics {grid-template-columns:1fr;}
+    .climate-inputs {grid-template-columns:1fr;}
+}
+</style>
+
+<div class="section-heading">
+    <small>MODULE 03 / NASA ATMOSPHERIC OBSERVATION</small>
+    <h2>Climate Analysis Intelligence</h2>
+</div>
+
+<p>
+    Explore atmospheric conditions and climate behaviour
+    through NASA Earth observation datasets.
+</p>
+
+<div class="climate-dashboard">
+
+    <div class="climate-label">EARTH ATMOSPHERE MONITOR</div>
+    <h2>Climate Signal Analyzer</h2>
+    <p>30-day temperature, humidity and wind observations</p>
+
+    <div class="climate-inputs">
+        <div>
+            <label>Latitude</label>
+            <input id="climateLat" type="number"
+                   value="11.0168" step="any">
+        </div>
+
+        <div>
+            <label>Longitude</label>
+            <input id="climateLon" type="number"
+                   value="76.9558" step="any">
+        </div>
     </div>
-    <p>Explore climate history and environmental variables using ERA5.</p>
-    <div class="placeholder">ERA5 integration pending</div>
+
+    <button class="climate-btn"
+            id="climateButton"
+            onclick="runClimateAnalysis()">
+        ANALYZE CLIMATE DATA →
+    </button>
+
+    <div id="climateStatus" class="climate-status">
+        Waiting for NASA POWER observations...
+    </div>
+
+    <div id="climateResults" style="display:none">
+
+        <div class="climate-metrics">
+
+            <div class="climate-card">
+                <small>AVERAGE TEMPERATURE</small>
+                <h2 id="climateTemp">--</h2>
+                <p>°C at 2 metres</p>
+            </div>
+
+            <div class="climate-card">
+                <small>MAXIMUM TEMPERATURE</small>
+                <h2 id="climateMax">--</h2>
+                <p>°C daily maximum average</p>
+            </div>
+
+            <div class="climate-card">
+                <small>MINIMUM TEMPERATURE</small>
+                <h2 id="climateMin">--</h2>
+                <p>°C daily minimum average</p>
+            </div>
+
+            <div class="climate-card">
+                <small>RELATIVE HUMIDITY</small>
+                <h2 id="climateHumidity">--</h2>
+                <p>Average percentage</p>
+            </div>
+
+            <div class="climate-card">
+                <small>WIND SPEED</small>
+                <h2 id="climateWind">--</h2>
+                <p>m/s at 2 metres</p>
+            </div>
+
+            <div class="climate-card">
+                <small>TEMPERATURE RANGE</small>
+                <h2 id="climateRange">--</h2>
+                <p>Average daily max-min difference</p>
+            </div>
+
+        </div>
+
+        <div class="climate-card" style="margin-top:20px">
+            <div class="climate-label">TEMPERATURE TIME SERIES</div>
+            <h3>Daily Temperature Pattern</h3>
+            <div id="climateChart" class="climate-chart"></div>
+            <p id="climatePeriod"></p>
+        </div>
+
+        <div class="climate-note" id="climateInsight"></div>
+
+        <div class="climate-note">
+            <strong>Data source:</strong> NASA POWER Daily API.
+            Parameters: T2M, T2M_MAX, T2M_MIN, RH2M, WS2M.
+            Observations are historical gridded data, not a
+            real-time local weather-station measurement.
+        </div>
+
+    </div>
+</div>
 </section>
+
+<script>
+async function runClimateAnalysis() {
+
+    const lat = Number(document.getElementById("climateLat").value);
+    const lon = Number(document.getElementById("climateLon").value);
+
+    const status = document.getElementById("climateStatus");
+    const results = document.getElementById("climateResults");
+    const button = document.getElementById("climateButton");
+
+    if (!Number.isFinite(lat) || !Number.isFinite(lon) ||
+        lat < -90 || lat > 90 || lon < -180 || lon > 180) {
+        status.textContent = "Enter valid coordinates.";
+        return;
+    }
+
+    button.disabled = true;
+    results.style.display = "none";
+    status.textContent = "Connecting to NASA POWER climate service...";
+
+    try {
+
+        const end = new Date();
+        end.setUTCDate(end.getUTCDate() - 5);
+
+        const start = new Date(end);
+        start.setUTCDate(start.getUTCDate() - 29);
+
+        const fmt = d => d.toISOString()
+            .slice(0,10).replaceAll("-","");
+
+        const url = new URL(
+            "https://power.larc.nasa.gov/api/temporal/daily/point"
+        );
+
+        url.search = new URLSearchParams({
+            parameters: "T2M,T2M_MAX,T2M_MIN,RH2M,WS2M",
+            community: "AG",
+            longitude: lon,
+            latitude: lat,
+            start: fmt(start),
+            end: fmt(end),
+            format: "JSON",
+            "time-standard": "UTC"
+        });
+
+        const response = await fetch(url);
+
+        if (!response.ok) {
+            throw new Error("NASA API error: " + response.status);
+        }
+
+        const json = await response.json();
+        const p = json.properties.parameter;
+
+        function validValues(obj) {
+            return Object.values(obj)
+                .map(Number)
+                .filter(v => Number.isFinite(v) && v > -900);
+        }
+
+        const temp = validValues(p.T2M);
+        const maxTemp = validValues(p.T2M_MAX);
+        const minTemp = validValues(p.T2M_MIN);
+        const humidity = validValues(p.RH2M);
+        const wind = validValues(p.WS2M);
+
+        if (!temp.length || !maxTemp.length ||
+            !minTemp.length || !humidity.length || !wind.length) {
+            throw new Error("Incomplete climate observations.");
+        }
+
+        const avg = arr =>
+            arr.reduce((a,b) => a+b,0) / arr.length;
+
+        const averageTemp = avg(temp);
+        const averageMax = avg(maxTemp);
+        const averageMin = avg(minTemp);
+        const averageHumidity = avg(humidity);
+        const averageWind = avg(wind);
+        const temperatureRange = averageMax - averageMin;
+
+        document.getElementById("climateTemp").textContent =
+            averageTemp.toFixed(2) + " °C";
+
+        document.getElementById("climateMax").textContent =
+            averageMax.toFixed(2) + " °C";
+
+        document.getElementById("climateMin").textContent =
+            averageMin.toFixed(2) + " °C";
+
+        document.getElementById("climateHumidity").textContent =
+            averageHumidity.toFixed(2) + " %";
+
+        document.getElementById("climateWind").textContent =
+            averageWind.toFixed(2) + " m/s";
+
+        document.getElementById("climateRange").textContent =
+            temperatureRange.toFixed(2) + " °C";
+
+        const chart = document.getElementById("climateChart");
+        chart.innerHTML = "";
+
+        const chartValues = temp;
+        const low = Math.min(...chartValues);
+        const high = Math.max(...chartValues);
+        const span = Math.max(high - low, 1);
+
+        chartValues.forEach((value,index) => {
+
+            const wrap = document.createElement("div");
+            wrap.className = "climate-bar-wrap";
+            wrap.title = "Observation " + (index+1) +
+                ": " + value.toFixed(2) + " °C";
+
+            const bar = document.createElement("div");
+            bar.className = "climate-bar";
+            bar.style.height =
+                (15 + ((value-low)/span)*85) + "%";
+
+            wrap.appendChild(bar);
+            chart.appendChild(wrap);
+        });
+
+        document.getElementById("climatePeriod").textContent =
+            "Period: " + start.toISOString().slice(0,10) +
+            " to " + end.toISOString().slice(0,10) +
+            " | Location: " + lat + ", " + lon;
+
+        document.getElementById("climateInsight").textContent =
+            "Climate observation summary: Average temperature " +
+            averageTemp.toFixed(2) + " °C, relative humidity " +
+            averageHumidity.toFixed(2) + "% and wind speed " +
+            averageWind.toFixed(2) + " m/s. These values describe " +
+            "the selected period and location.";
+
+        results.style.display = "block";
+        status.textContent =
+            "NASA POWER climate observations retrieved successfully.";
+
+    } catch(error) {
+
+        status.textContent = "Data error: " + error.message;
+
+    } finally {
+
+        button.disabled = false;
+
+    }
+}
+</script>
+
 
 <section id="vegetation" class="detail-section">
     <div class="section-heading">
