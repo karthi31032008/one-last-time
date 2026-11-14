@@ -1,1 +1,357 @@
 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Land Observation | FarmShift AI</title>
+
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+}
+
+body {
+    background: #07131c;
+    color: #eaf5f7;
+}
+
+header {
+    padding: 22px 5%;
+    background: #0c202c;
+    border-bottom: 1px solid #24404d;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+.logo {
+    color: #62d6b0;
+    font-size: 22px;
+    font-weight: bold;
+}
+
+header a {
+    color: #a9c5ce;
+    text-decoration: none;
+}
+
+.container {
+    width: 90%;
+    max-width: 1250px;
+    margin: 35px auto;
+}
+
+.tag {
+    color: #62d6b0;
+    font-size: 12px;
+    letter-spacing: 2px;
+    margin-bottom: 12px;
+}
+
+h1 {
+    font-size: 34px;
+    margin-bottom: 12px;
+}
+
+.subtitle {
+    color: #9bb4be;
+    line-height: 1.7;
+    max-width: 750px;
+    margin-bottom: 28px;
+}
+
+.stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+    gap: 15px;
+    margin-bottom: 25px;
+}
+
+.stat {
+    background: #102733;
+    border: 1px solid #244653;
+    border-radius: 13px;
+    padding: 20px;
+}
+
+.stat small {
+    color: #9bb4be;
+}
+
+.stat h2 {
+    color: #62d6b0;
+    margin-top: 12px;
+    font-size: 21px;
+}
+
+.panel {
+    background: #102733;
+    border: 1px solid #244653;
+    border-radius: 15px;
+    padding: 22px;
+    margin-bottom: 22px;
+}
+
+.panel h2 {
+    font-size: 19px;
+    margin-bottom: 12px;
+}
+
+.panel p {
+    color: #a9c0c9;
+    line-height: 1.7;
+}
+
+.controls {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    align-items: center;
+    margin: 18px 0;
+}
+
+input, button {
+    padding: 11px 14px;
+    border-radius: 8px;
+    border: 1px solid #31515e;
+    background: #071a24;
+    color: white;
+}
+
+button {
+    background: #16866e;
+    border: none;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+button:hover {
+    background: #20a88a;
+}
+
+#map {
+    height: 480px;
+    width: 100%;
+    border-radius: 12px;
+    overflow: hidden;
+    background: #07131c;
+}
+
+.note {
+    color: #8eaab5;
+    font-size: 13px;
+    margin-top: 12px;
+    line-height: 1.6;
+}
+
+.features {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 15px;
+}
+
+.feature {
+    background: #0b202b;
+    border: 1px solid #244653;
+    padding: 20px;
+    border-radius: 12px;
+}
+
+.feature h3 {
+    color: #62d6b0;
+    margin-bottom: 10px;
+}
+
+footer {
+    text-align: center;
+    padding: 25px;
+    color: #77939e;
+    font-size: 13px;
+}
+
+@media(max-width:600px) {
+    h1 { font-size: 27px; }
+    #map { height: 350px; }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <div class="logo">FARMSHIFT AI</div>
+    <a href="/">← Back to Dashboard</a>
+</header>
+
+<main class="container">
+
+    <div class="tag">MODULE 04 / EARTH OBSERVATION</div>
+
+    <h1>Land Observation Intelligence</h1>
+
+    <p class="subtitle">
+        Explore satellite-based Earth observations to understand
+        land patterns, vegetation conditions and environmental changes.
+        View NASA satellite imagery directly on the interactive map.
+    </p>
+
+    <section class="stats">
+        <div class="stat">
+            <small>Satellite Data Source</small>
+            <h2>NASA GIBS</h2>
+        </div>
+
+        <div class="stat">
+            <small>Satellite Mission</small>
+            <h2>MODIS Terra</h2>
+        </div>
+
+        <div class="stat">
+            <small>Observation Type</small>
+            <h2>True Color</h2>
+        </div>
+
+        <div class="stat">
+            <small>Map Centre</small>
+            <h2>Coimbatore</h2>
+        </div>
+    </section>
+
+    <section class="panel">
+        <h2>🛰️ Live Satellite Image Explorer</h2>
+
+        <p>
+            Explore NASA MODIS Terra corrected reflectance imagery.
+            Select an observation date to view available satellite imagery.
+        </p>
+
+        <div class="controls">
+            <label for="observationDate">Observation date:</label>
+            <input type="date" id="observationDate">
+            <button onclick="updateSatellite()">Load Observation</button>
+        </div>
+
+        <div id="map"></div>
+
+        <p class="note" id="mapStatus">
+            Loading satellite imagery...
+        </p>
+    </section>
+
+    <section class="panel">
+        <h2>Earth Observation Capabilities</h2>
+
+        <div class="features">
+            <div class="feature">
+                <h3>🌿 Vegetation Monitoring</h3>
+                <p>
+                    Study vegetation patterns and identify areas
+                    that may need further crop-health investigation.
+                </p>
+            </div>
+
+            <div class="feature">
+                <h3>🌍 Land Surface Changes</h3>
+                <p>
+                    Compare satellite images across dates to explore
+                    visible changes in land cover.
+                </p>
+            </div>
+
+            <div class="feature">
+                <h3>🛰️ Satellite Observation</h3>
+                <p>
+                    Explore Earth imagery collected by NASA's
+                    MODIS Terra observation system.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <p class="note">
+        Data source: NASA Global Imagery Browse Services (GIBS).
+        Satellite imagery availability depends on the selected date,
+        satellite coverage and NASA service availability.
+    </p>
+
+</main>
+
+<footer>
+    FARMShift AI · Earth Observation Intelligence
+</footer>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+<script>
+const map = L.map("map").setView([11.0168, 76.9558], 7);
+
+L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+    attribution: "&copy; OpenStreetMap contributors"
+}).addTo(map);
+
+let satelliteLayer;
+
+function getDefaultDate() {
+    const date = new Date();
+    date.setDate(date.getDate() - 3);
+
+    return date.toISOString().split("T")[0];
+}
+
+const dateInput = document.getElementById("observationDate");
+dateInput.max = getDefaultDate();
+dateInput.value = getDefaultDate();
+
+function updateSatellite() {
+    const selectedDate = dateInput.value;
+    const status = document.getElementById("mapStatus");
+
+    if (!selectedDate) {
+        status.textContent = "Please select an observation date.";
+        return;
+    }
+
+    if (selectedDate > getDefaultDate()) {
+        status.textContent =
+            "Please select a date at least three days in the past.";
+        return;
+    }
+
+    if (satelliteLayer) {
+        map.removeLayer(satelliteLayer);
+    }
+
+    const tileURL =
+        "https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/" +
+        "MODIS_Terra_CorrectedReflectance_TrueColor/default/" +
+        selectedDate +
+        "/GoogleMapsCompatible_Level9/{z}/{y}/{x}.jpg";
+
+    satelliteLayer = L.tileLayer(tileURL, {
+        attribution: "NASA GIBS / MODIS Terra",
+        maxZoom: 9,
+        tileSize: 256
+    });
+
+    satelliteLayer.addTo(map);
+
+    status.textContent =
+        "Requested NASA MODIS Terra imagery for " +
+        selectedDate +
+        ". If tiles are unavailable, try another date.";
+}
+
+updateSatellite();
+</script>
+
+</body>
+</html>
+
