@@ -378,8 +378,9 @@
 
 <script src="{{ url_for('static', filename='js/app.js') }}"></script>
 
+
 <script>
-document.getElementById("suitabilityForm").addEventListener("submit", function(e) {
+document.getElementById("suitabilityForm").addEventListener("submit", async function(e) {
     e.preventDefault();
 
     const country = document.getElementById("country").value;
@@ -390,17 +391,57 @@ document.getElementById("suitabilityForm").addEventListener("submit", function(e
 
     const result = document.getElementById("resultMessage");
 
-    result.style.display = "block";
+    // Coordinates are currently set for Coimbatore.
+    // Replace with location-specific coordinates in the next step.
+    const lat = 11.0168;
+    const lon = 76.9558;
 
-    result.textContent =
-        "Input received for " + crop + " in " +
-        district + ", " + region + ", " + country +
-        ". Growing season: " + season +
-        ". Scientific suitability results are not yet available. " +
-        "The verified GAEZ dataset connection is the next development step.";
+    result.style.display = "block";
+    result.textContent = "Fetching climate observations from NASA POWER...";
+
+    try {
+        const response = await fetch(
+            `/api/crop-climate?lat=${lat}&lon=${lon}`
+        );
+
+        const data = await response.json();
+
+        if (!response.ok || data.status !== "success") {
+            throw new Error(data.message || "Climate data unavailable");
+        }
+
+        const climate = data.climate;
+
+        result.innerHTML = `
+            <strong>NASA POWER Climate Assessment</strong><br><br>
+            Location: ${district}, ${region}, ${country}<br>
+            Proposed crop: ${crop}<br>
+            Growing season: ${season}<br><br>
+
+            <strong>Average Temperature:</strong>
+            ${climate.average_temperature_c} °C<br>
+
+            <strong>Total Rainfall:</strong>
+            ${climate.total_rainfall_mm} mm<br>
+
+            <strong>Average Humidity:</strong>
+            ${climate.average_humidity_percent}%<br><br>
+
+            <strong>Data Source:</strong> NASA POWER<br>
+            <strong>Period:</strong> ${data.period.start} to ${data.period.end}<br><br>
+
+            Climate observations retrieved successfully.
+            This is not an official crop suitability score.
+            GAEZ and SoilGrids integration is still pending.
+        `;
+
+    } catch (error) {
+        result.textContent =
+            "Unable to retrieve NASA POWER climate data: " + error.message;
+    }
 });
 </script>
-
 </body>
 </html>
+
 
