@@ -417,14 +417,376 @@ async function runCropClimateDemo() {
 </script>
 
 
+
 <section id="water" class="detail-section">
-    <div class="section-heading">
-        <small>MODULE 02</small>
-        <h2>Water Intelligence</h2>
+
+<style>
+.water-dashboard {
+    background:linear-gradient(135deg,#0b251a,#071710);
+    border:1px solid #28583d;
+    border-radius:16px;
+    padding:24px;
+    margin-top:22px;
+    color:#eafff0;
+}
+.water-heading {
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    flex-wrap:wrap;
+    gap:12px;
+}
+.water-tag {
+    color:#64e8a0;
+    font-size:10px;
+    letter-spacing:1.5px;
+}
+.water-dashboard p {
+    color:#a2c2ad;
+    font-size:12px;
+    line-height:1.8;
+}
+.water-inputs {
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:14px;
+    margin-top:20px;
+}
+.water-inputs label {
+    display:block;
+    color:#a2c2ad;
+    font-size:12px;
+    margin-bottom:8px;
+}
+.water-inputs input {
+    width:100%;
+    padding:13px;
+    background:#071810;
+    color:white;
+    border:1px solid #38684b;
+    border-radius:8px;
+}
+.water-btn {
+    width:100%;
+    padding:14px;
+    margin-top:16px;
+    background:#35d485;
+    color:#062012;
+    border:0;
+    border-radius:8px;
+    font-weight:bold;
+    cursor:pointer;
+}
+.water-metrics {
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:14px;
+    margin-top:22px;
+}
+.water-metric {
+    background:#102d1d;
+    border:1px solid #28583d;
+    border-radius:11px;
+    padding:18px;
+}
+.water-metric small {
+    color:#8db99b;
+    font-size:10px;
+}
+.water-metric h2 {
+    color:#60e7a0;
+    font-size:25px;
+    margin:12px 0;
+}
+.water-chart {
+    height:190px;
+    display:flex;
+    align-items:flex-end;
+    gap:4px;
+    padding:15px 5px 0;
+    border-bottom:1px solid #42674d;
+}
+.water-bar-wrap {
+    flex:1;
+    height:100%;
+    display:flex;
+    align-items:flex-end;
+    min-width:2px;
+}
+.water-bar {
+    width:100%;
+    background:linear-gradient(#67efaa,#138c55);
+    border-radius:4px 4px 0 0;
+    min-height:2px;
+}
+.water-note {
+    padding:15px;
+    margin-top:18px;
+    background:#0b2115;
+    border-left:3px solid #43dc8b;
+    color:#a2c2ad;
+    font-size:11px;
+    line-height:1.8;
+}
+.water-status {
+    padding:13px;
+    background:#0b2115;
+    border-radius:8px;
+    margin-top:16px;
+    color:#a7e9bf;
+    font-size:12px;
+}
+@media(max-width:650px) {
+    .water-metrics {grid-template-columns:1fr;}
+    .water-inputs {grid-template-columns:1fr;}
+}
+</style>
+
+<div class="section-heading">
+    <small>MODULE 02 / NASA HYDROLOGICAL OBSERVATION</small>
+    <h2>Water Intelligence</h2>
+</div>
+
+<p>
+    Decode rainfall behaviour through NASA POWER daily
+    precipitation observations.
+</p>
+
+<div class="water-dashboard">
+
+    <div class="water-heading">
+        <div>
+            <div class="water-tag">EARTH HYDROLOGY MONITOR</div>
+            <h2>Rainfall Intelligence Engine</h2>
+            <p>30-day precipitation observation system</p>
+        </div>
+        <span class="water-tag">NASA POWER</span>
     </div>
-    <p>Explore groundwater, precipitation and evapotranspiration observations.</p>
-    <div class="placeholder">USGS / CoCoRaHS / OpenET integration pending</div>
+
+    <div class="water-inputs">
+        <div>
+            <label>Latitude</label>
+            <input id="waterLat" type="number"
+                   value="11.0168" step="any">
+        </div>
+        <div>
+            <label>Longitude</label>
+            <input id="waterLon" type="number"
+                   value="76.9558" step="any">
+        </div>
+    </div>
+
+    <button class="water-btn" id="waterAnalyze"
+            onclick="runWaterIntelligence()">
+        ANALYZE WATER SYSTEM →
+    </button>
+
+    <div id="waterStatus" class="water-status">
+        Waiting for NASA POWER observations...
+    </div>
+
+    <div id="waterResults" style="display:none">
+
+        <div class="water-metrics">
+
+            <div class="water-metric">
+                <small>RAINFALL ACCUMULATION</small>
+                <h2 id="waterTotal">--</h2>
+                <p>30-day total (mm)</p>
+            </div>
+
+            <div class="water-metric">
+                <small>DAILY AVERAGE</small>
+                <h2 id="waterAverage">--</h2>
+                <p>mm per day</p>
+            </div>
+
+            <div class="water-metric">
+                <small>RAINY DAYS</small>
+                <h2 id="waterRainy">--</h2>
+                <p>Days with precipitation above zero</p>
+            </div>
+
+            <div class="water-metric">
+                <small>DRY DAYS</small>
+                <h2 id="waterDry">--</h2>
+                <p>Zero precipitation days</p>
+            </div>
+
+            <div class="water-metric">
+                <small>PEAK RAINFALL</small>
+                <h2 id="waterPeak">--</h2>
+                <p>Maximum daily precipitation</p>
+            </div>
+
+            <div class="water-metric">
+                <small>VALID DATA RECORDS</small>
+                <h2 id="waterRecords">--</h2>
+                <p>Available observations</p>
+            </div>
+
+        </div>
+
+        <div class="water-metric" style="margin-top:20px">
+            <div class="water-tag">PRECIPITATION TIME SERIES</div>
+            <h3>Daily Rainfall Pattern</h3>
+            <div id="waterChart" class="water-chart"></div>
+            <p id="waterDateRange"></p>
+        </div>
+
+        <div class="water-note" id="waterInsight"></div>
+
+        <div class="water-note">
+            <strong>Data source:</strong> NASA POWER Daily API.
+            Parameter: PRECTOTCORR.
+            This analysis represents precipitation, not groundwater
+            reserves or measured soil moisture.
+        </div>
+
+    </div>
+</div>
+
 </section>
+
+<script>
+async function runWaterIntelligence() {
+
+    const lat = Number(document.getElementById("waterLat").value);
+    const lon = Number(document.getElementById("waterLon").value);
+
+    const status = document.getElementById("waterStatus");
+    const results = document.getElementById("waterResults");
+    const button = document.getElementById("waterAnalyze");
+
+    if (!Number.isFinite(lat) || !Number.isFinite(lon) ||
+        lat < -90 || lat > 90 || lon < -180 || lon > 180) {
+        status.textContent = "Enter valid coordinates.";
+        return;
+    }
+
+    button.disabled = true;
+    status.textContent = "Connecting to NASA POWER...";
+    results.style.display = "none";
+
+    try {
+
+        const end = new Date();
+        end.setUTCDate(end.getUTCDate() - 5);
+
+        const start = new Date(end);
+        start.setUTCDate(start.getUTCDate() - 29);
+
+        const fmt = d => d.toISOString().slice(0,10).replaceAll("-","");
+
+        const url = new URL(
+            "https://power.larc.nasa.gov/api/temporal/daily/point"
+        );
+
+        url.search = new URLSearchParams({
+            parameters: "PRECTOTCORR",
+            community: "AG",
+            longitude: lon,
+            latitude: lat,
+            start: fmt(start),
+            end: fmt(end),
+            format: "JSON",
+            "time-standard": "UTC"
+        });
+
+        const response = await fetch(url);
+
+        if (!response.ok) {
+            throw new Error("NASA API error: " + response.status);
+        }
+
+        const json = await response.json();
+
+        const records = json.properties.parameter.PRECTOTCORR;
+
+        const data = Object.entries(records)
+            .map(([date,value]) => ({
+                date,
+                value: Number(value)
+            }))
+            .filter(x => Number.isFinite(x.value) && x.value >= 0);
+
+        if (!data.length) {
+            throw new Error("No valid rainfall observations.");
+        }
+
+        const values = data.map(x => x.value);
+
+        const total = values.reduce((a,b) => a+b,0);
+        const average = total / values.length;
+        const rainy = values.filter(x => x > 0).length;
+        const dry = values.filter(x => x === 0).length;
+        const peak = Math.max(...values);
+
+        const peakDay = data.find(x => x.value === peak);
+
+        document.getElementById("waterTotal").textContent =
+            total.toFixed(2) + " mm";
+
+        document.getElementById("waterAverage").textContent =
+            average.toFixed(2) + " mm";
+
+        document.getElementById("waterRainy").textContent = rainy;
+
+        document.getElementById("waterDry").textContent = dry;
+
+        document.getElementById("waterPeak").textContent =
+            peak.toFixed(2) + " mm";
+
+        document.getElementById("waterRecords").textContent =
+            data.length;
+
+        const chart = document.getElementById("waterChart");
+        chart.innerHTML = "";
+
+        const max = Math.max(peak, 1);
+
+        data.forEach(item => {
+
+            const wrap = document.createElement("div");
+            wrap.className = "water-bar-wrap";
+            wrap.title = item.date + ": " + item.value.toFixed(2) + " mm";
+
+            const bar = document.createElement("div");
+            bar.className = "water-bar";
+            bar.style.height =
+                Math.max(2, item.value / max * 100) + "%";
+
+            wrap.appendChild(bar);
+            chart.appendChild(wrap);
+        });
+
+        document.getElementById("waterDateRange").textContent =
+            "Period: " + data[0].date + " to " +
+            data[data.length-1].date +
+            " | Location: " + lat + ", " + lon;
+
+        document.getElementById("waterInsight").textContent =
+            "Rainfall observation: " + rainy +
+            " rainy days and " + dry +
+            " zero-precipitation days. Peak rainfall was " +
+            peak.toFixed(2) + " mm on " + peakDay.date + ".";
+
+        results.style.display = "block";
+        status.textContent =
+            "NASA POWER rainfall observations retrieved successfully.";
+
+    } catch(error) {
+
+        status.textContent = "Data error: " + error.message;
+
+    } finally {
+
+        button.disabled = false;
+
+    }
+}
+</script>
+
 
 <section id="climate" class="detail-section">
     <div class="section-heading">
