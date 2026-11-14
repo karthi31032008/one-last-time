@@ -8,6 +8,14 @@ from datetime import datetime, timezone
 from flask import Flask, render_template, jsonify, request
 
 app = Flask(__name__)
+# FIREBASE ADMIN CONNECTION
+if not firebase_admin._apps:
+    cred = credentials.Certificate(
+        "/etc/secrets/serviceAccountKey.json"
+    )
+    firebase_admin.initialize_app(cred)
+
+db = firestore.client()
 
 # SECURITY
 app.config["SECRET_KEY"] = os.environ.get(
