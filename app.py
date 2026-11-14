@@ -3,7 +3,8 @@ import os
 import json
 import logging
 from pathlib import Path
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
+import requests
 import firebase_admin
 from firebase_admin import credentials, firestore
 
@@ -161,6 +162,127 @@ def gaez_detect():
         "longitude": longitude,
         "message": "Dataset detected. Actual spatial suitability processing requires the GAEZ dataset schema and raster lookup."
     })
+
+
+# ==========================================
+# FARM SHIFT AI - NASA CROP CLIMATE API
+# Data Source: NASA POWER
+# ==========================================
+
+@app.route("/api/crop-climate", methods=["GET"])
+def crop_climate_api():
+
+    try:
+        lat = float(request.args.get("lat", 11.0168))
+        lon = float(request.args.get("lon", 76.9558))
+
+        if not (-90 <= lat <= 90):
+            return jsonify({
+                "status": "error",
+                "message": "Invalid latitude"
+            }), 400
+
+        if not (-180 <= lon <= 180):
+            return jsonify({
+                "status": "error",
+                "message": "Invalid longitude"
+            }), 400
+
+        end_date = datetime.utcnow() - timedelta(days=5)
+        start_date = end_date - timedelta(days=29)
+
+        params = {
+            "parameters": "T2M,PRECTOTCORR,RH2M",
+            "community": "AG",
+            "longitude": lon,
+            "latitude": lat,
+            "start": start_date.strftime("%Y%m%d"),
+            "end": end_date.strftime("%Y%m%d"),
+            "format": "JSON"
+        }
+
+        api_url = (
+            "https://power.larc.nasa.gov/api/temporal/"
+            "daily/point"
+        )
+
+        response = requests.get(
+            api_url,
+            params=params,
+            timeout=30
+        )
+
+        response.raise_for_status()
+
+        nasa_data = response.json()
+
+        climate = nasa_data.get(
+            "properties", {}
+        ).get("parameter", {})
+
+        def clean_values(parameter):
+            return [
+                float(value)
+                for value in parameter.values()
+                if isinstance(value, (int, float))
+                and value > -900
+            ]
+
+        temperatures = clean_values(
+            climate.get("T2M", {})
+        )
+
+        rainfall = clean_values(
+            climate.get("PRECTOTCORR", {})
+        )
+
+        humidity = clean_values(
+            climate.get("RH2M", {})
+        )
+
+        if not temperatures or not rainfall or not humidity:
+            return jsonify({
+                "status": "error",
+                "message": "NASA climate data unavailable"
+            }), 502
+
+        return jsonify({
+            "status": "success",
+            "source": "NASA POWER",
+            "location": {
+                "latitude": lat,
+                "longitude": lon
+            },
+            "period": {
+                "start": start_date.strftime("%Y-%m-%d"),
+                "end": end_date.strftime("%Y-%m-%d")
+            },
+            "climate": {
+                "average_temperature_c": round(
+                    sum(temperatures) / len(temperatures), 2
+                ),
+                "total_rainfall_mm": round(
+                    sum(rainfall), 2
+                ),
+                "average_humidity_percent": round(
+                    sum(humidity) / len(humidity), 2
+                )
+            }
+        })
+
+    except requests.RequestException:
+        app.logger.exception("NASA POWER API request failed")
+        return jsonify({
+            "status": "error",
+            "message": "NASA POWER service unavailable"
+        }), 502
+
+    except (ValueError, TypeError):
+        return jsonify({
+            "status": "error",
+            "message": "Invalid input"
+        }), 400
+
 # CROP SUITABILITY
 @app.route("/crop-suitability")
 def crop_suitability():
