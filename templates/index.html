@@ -163,7 +163,45 @@
     <p>Analyze NASA environmental datasets, visualize climate indicators and transform Earth observation data into meaningful agricultural insights.</p>
     <span class="module-link">Explore module →</span>
 </a>
+<div class="module-grid">
 
+    <a href="/data-source/nasa-power" class="module-card source-card">
+        <h3>NASA POWER</h3>
+        <p>Temperature, rainfall, humidity and solar radiation.</p>
+        <span>Explore Climate Data →</span>
+    </a>
+
+    <a href="/data-source/modis-landsat" class="module-card source-card">
+        <h3>NASA MODIS & Landsat</h3>
+        <p>Earth surface imagery and land observation.</p>
+        <span>Explore Satellite Data →</span>
+    </a>
+
+    <a href="/data-source/nasa-smap" class="module-card source-card">
+        <h3>NASA SMAP</h3>
+        <p>Soil moisture and freeze-thaw observations.</p>
+        <span>Explore Water Data →</span>
+    </a>
+
+    <a href="/data-source/sentinel-2" class="module-card source-card">
+        <h3>Sentinel-2</h3>
+        <p>Multispectral crop and vegetation imagery.</p>
+        <span>Explore Crop Data →</span>
+    </a>
+
+    <a href="/data-source/soilgrids-gaez" class="module-card source-card">
+        <h3>SoilGrids & GAEZ</h3>
+        <p>Soil properties and agro-ecological suitability.</p>
+        <span>Explore Soil Data →</span>
+    </a>
+
+    <a href="/data-source/nasa-gedi" class="module-card source-card">
+        <h3>NASA GEDI</h3>
+        <p>Forest canopy, structure and biomass observations.</p>
+        <span>Explore Forest Data →</span>
+    </a>
+
+</div>
       
     </div>
 </section>
@@ -290,6 +328,25 @@
     background:#153425;
     padding:15px;
     border-radius:10px;
+}
+.source-card {
+    display: block;
+    color: inherit;
+    text-decoration: none;
+    cursor: pointer;
+    transition: transform 0.25s ease, border-color 0.25s ease;
+}
+
+.source-card:hover {
+    transform: translateY(-5px);
+    border-color: #45d6a0;
+}
+
+.source-card span {
+    display: inline-block;
+    margin-top: 20px;
+    color: #45d6a0;
+    font-weight: 600;
 }
 </style>
 
