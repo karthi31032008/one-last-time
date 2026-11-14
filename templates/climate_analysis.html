@@ -1,1 +1,764 @@
 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Climate Analysis | FarmShift AI</title>
+
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background: #071521;
+    color: #eaf5ff;
+    font-family: Arial, sans-serif;
+    min-height: 100vh;
+}
+
+.app {
+    display: flex;
+    min-height: 100vh;
+}
+
+.sidebar {
+    width: 245px;
+    background: #0a1d2b;
+    border-right: 1px solid #244052;
+    padding: 28px 18px;
+    position: fixed;
+    inset: 0 auto 0 0;
+    z-index: 10;
+}
+
+.brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 50px;
+}
+
+.brand-icon {
+    font-size: 28px;
+}
+
+.brand h2 {
+    font-size: 18px;
+}
+
+.brand h2 span {
+    color: #42d8ef;
+}
+
+.brand small {
+    font-size: 9px;
+    color: #7d9eaf;
+    letter-spacing: 2px;
+}
+
+.menu-label {
+    color: #7194a8;
+    font-size: 10px;
+    letter-spacing: 2px;
+    margin: 25px 10px 14px;
+}
+
+nav {
+    display: grid;
+    gap: 7px;
+}
+
+.nav-link {
+    color: #a6bfce;
+    padding: 13px;
+    text-decoration: none;
+    font-size: 12px;
+    border-radius: 8px;
+}
+
+.nav-link:hover,
+.nav-link.active {
+    background: #173c50;
+    color: #55e5f5;
+}
+
+.sidebar-bottom {
+    position: absolute;
+    bottom: 28px;
+    color: #91adbc;
+    font-size: 11px;
+}
+
+.main {
+    margin-left: 245px;
+    width: calc(100% - 245px);
+    padding: 0 35px;
+}
+
+.topbar {
+    height: 75px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid #1d394b;
+}
+
+.breadcrumb {
+    font-size: 12px;
+    color: #82a2b4;
+}
+
+.breadcrumb span {
+    color: #eaf5ff;
+}
+
+.live {
+    color: #51dfb0;
+    font-size: 10px;
+    letter-spacing: 1px;
+}
+
+.content {
+    max-width: 1200px;
+    margin: auto;
+    padding: 35px 0 55px;
+}
+
+.back {
+    color: #54d9ed;
+    text-decoration: none;
+    font-size: 12px;
+}
+
+.hero {
+    margin-top: 25px;
+    padding: 35px;
+    border: 1px solid #28536b;
+    border-radius: 15px;
+    background:
+      radial-gradient(circle at 85% 20%, #164c66, transparent 45%),
+      linear-gradient(120deg, #102d40, #0b1d2c);
+}
+
+.eyebrow {
+    color: #55e0ed;
+    font-size: 10px;
+    letter-spacing: 3px;
+}
+
+.hero h1 {
+    font-size: clamp(27px, 4vw, 42px);
+    margin: 18px 0;
+}
+
+.hero h1 span {
+    color: #4bd9ee;
+}
+
+.hero p {
+    color: #a4c0d0;
+    font-size: 13px;
+    line-height: 1.9;
+    max-width: 700px;
+}
+
+.section-title {
+    margin: 35px 0 18px;
+}
+
+.section-title small {
+    color: #54dced;
+    font-size: 10px;
+    letter-spacing: 2px;
+}
+
+.section-title h2 {
+    font-size: 20px;
+    margin-top: 8px;
+}
+
+.input-panel {
+    background: #10283a;
+    border: 1px solid #28516a;
+    border-radius: 13px;
+    padding: 23px;
+}
+
+.input-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 18px;
+}
+
+.field label {
+    display: block;
+    color: #a9c4d3;
+    font-size: 11px;
+    margin-bottom: 9px;
+}
+
+.field input {
+    width: 100%;
+    padding: 13px;
+    border: 1px solid #355c70;
+    border-radius: 7px;
+    background: #091d2a;
+    color: white;
+    outline: none;
+}
+
+.field input:focus {
+    border-color: #43d9ed;
+}
+
+.analyze-btn {
+    width: 100%;
+    margin-top: 20px;
+    padding: 15px;
+    border: 0;
+    border-radius: 7px;
+    background: #35c8df;
+    color: #061b25;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.analyze-btn:disabled {
+    opacity: .6;
+    cursor: wait;
+}
+
+.status {
+    margin-top: 15px;
+    color: #9fc3d5;
+    font-size: 12px;
+    line-height: 1.7;
+}
+
+.metrics {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 15px;
+    margin-top: 22px;
+}
+
+.metric-card {
+    background: #10283a;
+    border: 1px solid #28516a;
+    padding: 20px;
+    border-radius: 11px;
+}
+
+.metric-card small {
+    color: #8caec1;
+    font-size: 10px;
+    letter-spacing: 1px;
+}
+
+.metric-card h3 {
+    font-size: 26px;
+    color: #55e0f0;
+    margin: 14px 0 7px;
+}
+
+.metric-card p {
+    color: #91afbf;
+    font-size: 10px;
+}
+
+.data-panel {
+    background: #10283a;
+    border: 1px solid #28516a;
+    border-radius: 12px;
+    padding: 22px;
+    margin-top: 20px;
+}
+
+.data-panel h3 {
+    font-size: 15px;
+    margin-bottom: 17px;
+}
+
+.chart {
+    display: flex;
+    align-items: end;
+    gap: 7px;
+    height: 190px;
+    padding: 15px 0 5px;
+    border-bottom: 1px solid #35566a;
+}
+
+.bar-item {
+    flex: 1;
+    min-width: 0;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: end;
+    align-items: center;
+    gap: 7px;
+}
+
+.bar {
+    width: 65%;
+    min-height: 2px;
+    background: linear-gradient(to top, #1488ad, #53e2ed);
+    border-radius: 5px 5px 0 0;
+}
+
+.bar-date {
+    font-size: 8px;
+    color: #9ab6c7;
+}
+
+.table-wrap {
+    overflow-x: auto;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 11px;
+    min-width: 480px;
+}
+
+th, td {
+    padding: 13px 10px;
+    text-align: left;
+    border-bottom: 1px solid #29495b;
+}
+
+th {
+    color: #54ddeb;
+    font-weight: 600;
+}
+
+td {
+    color: #b4cbd8;
+}
+
+.note {
+    margin-top: 22px;
+    padding: 17px;
+    background: #0d2331;
+    border-left: 3px solid #39d1e6;
+    color: #a3bdca;
+    font-size: 11px;
+    line-height: 1.8;
+}
+
+footer {
+    padding: 30px 0;
+    border-top: 1px solid #244052;
+    color: #7898aa;
+    font-size: 10px;
+}
+
+@media(max-width:950px) {
+    .metrics {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media(max-width:700px) {
+    .sidebar {
+        display: none;
+    }
+
+    .main {
+        margin-left: 0;
+        width: 100%;
+        padding: 0 16px;
+    }
+
+    .input-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .hero {
+        padding: 25px;
+    }
+}
+
+@media(max-width:420px) {
+    .metrics {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .metric-card {
+        padding: 13px;
+    }
+
+    .metric-card h3 {
+        font-size: 21px;
+    }
+}
+</style>
+</head>
+
+<body>
+<div class="app">
+
+<aside class="sidebar">
+    <div class="brand">
+        <div class="brand-icon">🌍</div>
+        <div>
+            <h2>FarmShift <span>AI</span></h2>
+            <small>EARTH INTELLIGENCE</small>
+        </div>
+    </div>
+
+    <div class="menu-label">WORKSPACE</div>
+
+    <nav>
+        <a href="/" class="nav-link">◈ Overview</a>
+        <a href="/crop-suitability" class="nav-link">🌱 Crop Suitability</a>
+        <a href="/water-intelligence" class="nav-link">💧 Water Intelligence</a>
+        <a href="/climate-analysis" class="nav-link active">☁ Climate Analysis</a>
+        <a href="/land-observation" class="nav-link">🛰 Land Observation</a>
+        <a href="/market-intelligence" class="nav-link">📈 Market Intelligence</a>
+        <a href="/data-intelligence" class="nav-link">🔬 Data Intelligence</a>
+    </nav>
+
+    <div class="sidebar-bottom">● NASA Earth Data Workspace</div>
+</aside>
+
+<main class="main">
+
+<header class="topbar">
+    <div class="breadcrumb">
+        Intelligence / <span>Climate Analysis</span>
+    </div>
+    <span class="live">NASA POWER DATA</span>
+</header>
+
+<div class="content">
+
+<a href="/" class="back">← Back to Overview</a>
+
+<section class="hero">
+    <div class="eyebrow">MODULE 03 · EARTH CLIMATE INTELLIGENCE</div>
+    <h1>Climate <span>Analysis</span></h1>
+    <p>
+        Explore historical atmospheric conditions using NASA POWER
+        Earth observation and meteorological datasets. Analyze
+        temperature, precipitation, humidity and wind patterns
+        for your selected agricultural location.
+    </p>
+</section>
+
+<div class="section-title">
+    <small>LOCATION CONFIGURATION</small>
+    <h2>Define Observation Coordinates</h2>
+</div>
+
+<section class="input-panel">
+    <div class="input-grid">
+
+        <div class="field">
+            <label>Latitude</label>
+            <input id="latitude" type="number" step="any"
+                   value="11.0168" placeholder="Example: 11.0168">
+        </div>
+
+        <div class="field">
+            <label>Longitude</label>
+            <input id="longitude" type="number" step="any"
+                   value="76.9558" placeholder="Example: 76.9558">
+        </div>
+
+    </div>
+
+    <button class="analyze-btn" id="analyzeBtn" onclick="loadClimate()">
+        Analyze NASA Climate Data →
+    </button>
+
+    <div class="status" id="status">
+        Enter coordinates and analyze to retrieve NASA POWER daily data.
+    </div>
+</section>
+
+<div class="section-title">
+    <small>ATMOSPHERIC INDICATORS</small>
+    <h2>Climate Observation Metrics</h2>
+</div>
+
+<section class="metrics">
+
+    <div class="metric-card">
+        <small>AVG TEMPERATURE</small>
+        <h3 id="temperature">--</h3>
+        <p>°C · Daily average</p>
+    </div>
+
+    <div class="metric-card">
+        <small>TOTAL PRECIPITATION</small>
+        <h3 id="rainfall">--</h3>
+        <p>mm · Available period</p>
+    </div>
+
+    <div class="metric-card">
+        <small>AVG HUMIDITY</small>
+        <h3 id="humidity">--</h3>
+        <p>% · Relative humidity</p>
+    </div>
+
+    <div class="metric-card">
+        <small>AVG WIND SPEED</small>
+        <h3 id="wind">--</h3>
+        <p>m/s · At 2 metres</p>
+    </div>
+
+</section>
+
+<section class="data-panel">
+    <h3>30-Day Temperature Observation</h3>
+    <div id="temperatureChart" class="chart">
+        <p style="color:#91afbf;font-size:12px">
+            Climate chart will appear after data analysis.
+        </p>
+    </div>
+</section>
+
+<section class="data-panel">
+    <h3>Recent Daily Climate Records</h3>
+
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Temperature °C</th>
+                    <th>Rainfall mm</th>
+                    <th>Humidity %</th>
+                    <th>Wind m/s</th>
+                </tr>
+            </thead>
+            <tbody id="climateTable">
+                <tr>
+                    <td colspan="5">Waiting for NASA data...</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</section>
+
+<div class="note">
+    <strong>Data methodology:</strong>
+    NASA POWER Daily Point API. Parameters:
+    T2M, PRECTOTCORR, RH2M and WS2M.
+    Temperature and humidity are daily averages.
+    Precipitation is accumulated across available daily observations.
+    These are historical analysis indicators, not a weather forecast.
+    Missing observations are excluded from calculations.
+</div>
+
+<footer>
+    FARMSHIFT AI · NASA POWER EARTH DATA · CLIMATE INTELLIGENCE
+</footer>
+
+</div>
+</main>
+</div>
+
+<script>
+async function loadClimate() {
+
+    const lat = Number(document.getElementById("latitude").value);
+    const lon = Number(document.getElementById("longitude").value);
+
+    const status = document.getElementById("status");
+    const button = document.getElementById("analyzeBtn");
+
+    if (!Number.isFinite(lat) || !Number.isFinite(lon) ||
+        lat < -90 || lat > 90 || lon < -180 || lon > 180) {
+        status.textContent = "Please enter valid latitude and longitude.";
+        return;
+    }
+
+    button.disabled = true;
+    status.textContent = "Connecting to NASA POWER satellite climate data...";
+
+    try {
+        const end = new Date();
+        end.setUTCDate(end.getUTCDate() - 5);
+
+        const start = new Date(end);
+        start.setUTCDate(start.getUTCDate() - 29);
+
+        const formatDate = date =>
+            date.toISOString().slice(0, 10).replaceAll("-", "");
+
+        const parameters = "T2M,PRECTOTCORR,RH2M,WS2M";
+
+        const url =
+            "https://power.larc.nasa.gov/api/temporal/daily/point" +
+            "?parameters=" + parameters +
+            "&community=AG" +
+            "&longitude=" + encodeURIComponent(lon) +
+            "&latitude=" + encodeURIComponent(lat) +
+            "&start=" + formatDate(start) +
+            "&end=" + formatDate(end) +
+            "&format=JSON";
+
+        const response = await fetch(url);
+
+        if (!response.ok) {
+            throw new Error("NASA POWER API returned HTTP " + response.status);
+        }
+
+        const json = await response.json();
+
+        const data = json.properties.parameter;
+
+        const temperature = data.T2M || {};
+        const rainfall = data.PRECTOTCORR || {};
+        const humidity = data.RH2M || {};
+        const wind = data.WS2M || {};
+
+        function validValues(object) {
+            return Object.entries(object)
+                .filter(([date, value]) =>
+                    Number.isFinite(value) &&
+                    value !== -999 &&
+                    value !== -999.0
+                );
+        }
+
+        const tempValues = validValues(temperature);
+        const rainValues = validValues(rainfall);
+        const humidityValues = validValues(humidity);
+        const windValues = validValues(wind);
+
+        if (!tempValues.length) {
+            throw new Error("No valid temperature observations available.");
+        }
+
+        function average(values) {
+            if (!values.length) return null;
+            return values.reduce((sum, item) => sum + item[1], 0)
+                / values.length;
+        }
+
+        function sum(values) {
+            if (!values.length) return null;
+            return values.reduce((total, item) => total + item[1], 0);
+        }
+
+        const avgTemp = average(tempValues);
+        const totalRain = sum(rainValues);
+        const avgHumidity = average(humidityValues);
+        const avgWind = average(windValues);
+
+        document.getElementById("temperature").textContent =
+            avgTemp === null ? "--" : avgTemp.toFixed(1);
+
+        document.getElementById("rainfall").textContent =
+            totalRain === null ? "--" : totalRain.toFixed(1);
+
+        document.getElementById("humidity").textContent =
+            avgHumidity === null ? "--" : avgHumidity.toFixed(1);
+
+        document.getElementById("wind").textContent =
+            avgWind === null ? "--" : avgWind.toFixed(2);
+
+        // Temperature chart: recent observations
+        const chart = document.getElementById("temperatureChart");
+        chart.innerHTML = "";
+
+        const recent = tempValues.slice(-14);
+        const maxTemp = Math.max(...recent.map(item => item[1]));
+        const minTemp = Math.min(...recent.map(item => item[1]));
+        const range = Math.max(maxTemp - minTemp, 1);
+
+        recent.forEach(([date, value]) => {
+            const item = document.createElement("div");
+            item.className = "bar-item";
+
+            const bar = document.createElement("div");
+            bar.className = "bar";
+
+            const height = 20 + ((value - minTemp) / range) * 75;
+            bar.style.height = height + "%";
+            bar.title = date + ": " + value.toFixed(1) + " °C";
+
+            const label = document.createElement("span");
+            label.className = "bar-date";
+            label.textContent = date.slice(6, 8);
+
+            item.appendChild(bar);
+            item.appendChild(label);
+            chart.appendChild(item);
+        });
+
+        // Recent daily records
+        const table = document.getElementById("climateTable");
+        table.innerHTML = "";
+
+        const dates = Object.keys(temperature).sort().slice(-7).reverse();
+
+        dates.forEach(date => {
+            const row = document.createElement("tr");
+
+            const values = [
+                date.slice(0,4) + "-" + date.slice(4,6) + "-" + date.slice(6,8),
+                temperature[date],
+                rainfall[date],
+                humidity[date],
+                wind[date]
+            ];
+
+            values.forEach((value, index) => {
+                const cell = document.createElement("td");
+
+                if (index === 0) {
+                    cell.textContent = value;
+                } else if (
+                    typeof value === "number" &&
+                    Number.isFinite(value) &&
+                    value !== -999
+                ) {
+                    cell.textContent = value.toFixed(2);
+                } else {
+                    cell.textContent = "Unavailable";
+                }
+
+                row.appendChild(cell);
+            });
+
+            table.appendChild(row);
+        });
+
+        status.textContent =
+            "NASA POWER data loaded successfully. " +
+            "Coordinates: " + lat + ", " + lon +
+            ". Temperature observations: " + tempValues.length +
+            ". Data period: " + formatDate(start) + " to " + formatDate(end) + ".";
+
+    } catch (error) {
+        status.textContent = "Climate data error: " + error.message;
+
+        document.getElementById("temperature").textContent = "--";
+        document.getElementById("rainfall").textContent = "--";
+        document.getElementById("humidity").textContent = "--";
+        document.getElementById("wind").textContent = "--";
+
+        document.getElementById("temperatureChart").textContent =
+            "NASA data unavailable. Please try again later.";
+
+        document.getElementById("climateTable").innerHTML =
+            '<tr><td colspan="5">NASA observations unavailable.</td></tr>';
+
+    } finally {
+        button.disabled = false;
+    }
+}
+</script>
+
+</body>
+</html>
+
