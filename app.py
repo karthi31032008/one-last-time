@@ -120,80 +120,137 @@ DATA_SOURCES = {
     "nasa-power": {
         "title": "NASA POWER",
         "category": "Climate Intelligence",
-        "description": "Explore solar and meteorological observations.",
-        "details": [
-            "Daily air temperature",
-            "Precipitation",
-            "Relative humidity",
-            "Wind speed",
-            "Solar radiation"
+        "agency": "NASA Langley Research Center",
+        "description": "NASA POWER provides satellite and model-based solar and meteorological data for agricultural and environmental applications.",
+        "observations": [
+            "T2M - Air temperature at 2 metres",
+            "T2M_MAX - Maximum air temperature",
+            "T2M_MIN - Minimum air temperature",
+            "PRECTOTCORR - Corrected precipitation",
+            "RH2M - Relative humidity",
+            "WS2M - Wind speed at 2 metres",
+            "ALLSKY_SFC_SW_DWN - Solar radiation"
         ],
-        "source": "NASA POWER"
+        "applications": [
+            "Crop climate assessment",
+            "Rainfall and temperature analysis",
+            "Agricultural weather indicators",
+            "Climate-based crop planning"
+        ],
+        "status": "Live API connection available through the existing FarmShift AI NASA POWER endpoint.",
+        "integration": "live"
     },
 
     "modis-landsat": {
         "title": "NASA MODIS & Landsat",
-        "category": "Earth Observation",
-        "description": "Explore satellite observations of Earth's land surface.",
-        "details": [
+        "category": "Satellite Earth Observation",
+        "agency": "NASA / USGS",
+        "description": "MODIS and Landsat provide Earth observation imagery for monitoring land surfaces, vegetation and environmental changes.",
+        "observations": [
+            "MODIS surface reflectance",
             "Land surface observation",
-            "Satellite imagery",
-            "Vegetation monitoring",
-            "Land cover observation"
+            "Vegetation condition",
+            "Land cover patterns",
+            "Landsat multispectral imagery",
+            "Surface change observations"
         ],
-        "source": "NASA MODIS and Landsat"
+        "applications": [
+            "Land observation",
+            "Vegetation monitoring",
+            "Surface change assessment",
+            "Agricultural landscape analysis"
+        ],
+        "status": "Resource information displayed. Direct imagery and analysis integration is pending.",
+        "integration": "pending"
     },
 
     "nasa-smap": {
         "title": "NASA SMAP",
         "category": "Water Intelligence",
-        "description": "Explore satellite-based soil moisture observations.",
-        "details": [
+        "agency": "NASA Jet Propulsion Laboratory",
+        "description": "Soil Moisture Active Passive (SMAP) observes global surface soil moisture and freeze-thaw conditions.",
+        "observations": [
             "Surface soil moisture",
             "Root-zone soil moisture products",
-            "Freeze and thaw observations",
-            "Agricultural water awareness"
+            "Freeze-thaw state",
+            "Soil moisture variation",
+            "Global soil moisture observations"
         ],
-        "source": "NASA SMAP"
+        "applications": [
+            "Agricultural water awareness",
+            "Soil moisture monitoring",
+            "Drought assessment support",
+            "Irrigation planning support"
+        ],
+        "status": "Resource information displayed. SMAP data API integration is pending.",
+        "integration": "pending"
     },
 
     "sentinel-2": {
-        "title": "Sentinel-2",
-        "category": "Crop Monitoring",
-        "description": "Explore multispectral Earth observation imagery.",
-        "details": [
-            "Visible light bands",
-            "Near-infrared observations",
-            "Vegetation monitoring",
-            "Crop condition analysis"
+        "title": "Copernicus Sentinel-2",
+        "category": "Crop & Vegetation Monitoring",
+        "agency": "European Space Agency (ESA)",
+        "description": "Sentinel-2 provides multispectral optical imagery useful for vegetation, crop and land monitoring.",
+        "observations": [
+            "Blue, green and red bands",
+            "Near-infrared band",
+            "Shortwave infrared bands",
+            "Vegetation reflectance",
+            "Multispectral surface imagery"
         ],
-        "source": "ESA Copernicus Sentinel-2"
+        "applications": [
+            "Crop monitoring",
+            "Vegetation index analysis",
+            "Agricultural field observation",
+            "Land cover assessment"
+        ],
+        "status": "Resource information displayed. Sentinel-2 imagery integration is pending.",
+        "integration": "pending"
     },
 
     "soilgrids-gaez": {
-        "title": "SoilGrids & GAEZ",
-        "category": "Soil Intelligence",
-        "description": "Explore soil properties and agro-ecological suitability information.",
-        "details": [
-            "Soil properties",
-            "Soil constraints",
-            "Agro-ecological zones",
+        "title": "SoilGrids & FAO GAEZ",
+        "category": "Soil & Crop Suitability",
+        "agency": "ISRIC / FAO",
+        "description": "SoilGrids provides global soil property information. FAO GAEZ provides agro-ecological suitability and land productivity information.",
+        "observations": [
+            "Soil pH",
+            "Soil organic carbon",
+            "Soil texture",
+            "Soil property information",
+            "Agro-ecological suitability",
             "Crop suitability information"
         ],
-        "source": "SoilGrids and FAO GAEZ"
+        "applications": [
+            "Soil condition assessment",
+            "Crop suitability research",
+            "Agro-ecological analysis",
+            "Land productivity assessment"
+        ],
+        "status": "Resource information displayed. Actual soil and GAEZ spatial dataset processing is pending.",
+        "integration": "pending"
     },
 
     "nasa-gedi": {
         "title": "NASA GEDI",
         "category": "Forest Intelligence",
-        "description": "Explore spaceborne laser observations of forest structure.",
-        "details": [
+        "agency": "NASA",
+        "description": "Global Ecosystem Dynamics Investigation (GEDI) uses spaceborne lidar observations to study forest structure and vegetation.",
+        "observations": [
             "Canopy height",
-            "Forest structure",
+            "Forest vertical structure",
             "Above-ground biomass",
-            "Vegetation vertical profile"
+            "Vegetation structure",
+            "Forest ecosystem observations"
         ],
-        "source": "NASA GEDI"
+        "applications": [
+            "Forest structure monitoring",
+            "Canopy assessment",
+            "Biomass research",
+            "Forest ecosystem analysis"
+        ],
+        "status": "Resource information displayed. GEDI data processing integration is pending.",
+        "integration": "pending"
     }
 }
 
