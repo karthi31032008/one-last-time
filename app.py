@@ -112,6 +112,105 @@ def gaez_status():
             "message": "GAEZ dataset could not be validated."
         }), 500
 
+# ==========================================
+# SCIENTIFIC DATA SOURCE DETAILS
+# ==========================================
+
+DATA_SOURCES = {
+    "nasa-power": {
+        "title": "NASA POWER",
+        "category": "Climate Intelligence",
+        "description": "Explore solar and meteorological observations.",
+        "details": [
+            "Daily air temperature",
+            "Precipitation",
+            "Relative humidity",
+            "Wind speed",
+            "Solar radiation"
+        ],
+        "source": "NASA POWER"
+    },
+
+    "modis-landsat": {
+        "title": "NASA MODIS & Landsat",
+        "category": "Earth Observation",
+        "description": "Explore satellite observations of Earth's land surface.",
+        "details": [
+            "Land surface observation",
+            "Satellite imagery",
+            "Vegetation monitoring",
+            "Land cover observation"
+        ],
+        "source": "NASA MODIS and Landsat"
+    },
+
+    "nasa-smap": {
+        "title": "NASA SMAP",
+        "category": "Water Intelligence",
+        "description": "Explore satellite-based soil moisture observations.",
+        "details": [
+            "Surface soil moisture",
+            "Root-zone soil moisture products",
+            "Freeze and thaw observations",
+            "Agricultural water awareness"
+        ],
+        "source": "NASA SMAP"
+    },
+
+    "sentinel-2": {
+        "title": "Sentinel-2",
+        "category": "Crop Monitoring",
+        "description": "Explore multispectral Earth observation imagery.",
+        "details": [
+            "Visible light bands",
+            "Near-infrared observations",
+            "Vegetation monitoring",
+            "Crop condition analysis"
+        ],
+        "source": "ESA Copernicus Sentinel-2"
+    },
+
+    "soilgrids-gaez": {
+        "title": "SoilGrids & GAEZ",
+        "category": "Soil Intelligence",
+        "description": "Explore soil properties and agro-ecological suitability information.",
+        "details": [
+            "Soil properties",
+            "Soil constraints",
+            "Agro-ecological zones",
+            "Crop suitability information"
+        ],
+        "source": "SoilGrids and FAO GAEZ"
+    },
+
+    "nasa-gedi": {
+        "title": "NASA GEDI",
+        "category": "Forest Intelligence",
+        "description": "Explore spaceborne laser observations of forest structure.",
+        "details": [
+            "Canopy height",
+            "Forest structure",
+            "Above-ground biomass",
+            "Vegetation vertical profile"
+        ],
+        "source": "NASA GEDI"
+    }
+}
+
+
+@app.route("/data-source/<source_id>")
+def data_source_detail(source_id):
+
+    source = DATA_SOURCES.get(source_id)
+
+    if source is None:
+        return "Data source not found", 404
+
+    return render_template(
+        "data_source_detail.html",
+        source=source
+    )
+
 
 # GAEZ CROP SUITABILITY REQUEST
 @app.route("/api/gaez-detect", methods=["POST"])
