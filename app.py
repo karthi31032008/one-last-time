@@ -66,9 +66,40 @@ def internal_error(error):
         "error": "Internal server error"
     }), 500
 
+# CROP SUITABILITY
 @app.route("/crop-suitability")
 def crop_suitability():
     return render_template("crop_suitability.html")
+
+
+# WATER INTELLIGENCE
+@app.route("/water-intelligence")
+def water_intelligence():
+    return render_template("water_intelligence.html")
+
+
+# CLIMATE ANALYSIS
+@app.route("/climate-analysis")
+def climate_analysis():
+    return render_template("climate_analysis.html")
+
+
+# LAND OBSERVATION
+@app.route("/land-observation")
+def land_observation():
+    return render_template("land_observation.html")
+
+
+# MARKET INTELLIGENCE
+@app.route("/market-intelligence")
+def market_intelligence():
+    return render_template("market_intelligence.html")
+
+
+# DATA INTELLIGENCE
+@app.route("/data-intelligence")
+def data_intelligence():
+    return render_template("data_intelligence.html")
 
 
 # START SERVER
