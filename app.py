@@ -143,7 +143,10 @@ def gaez_detect():
         "longitude": longitude,
         "message": "Dataset detected. Actual spatial suitability processing requires the GAEZ dataset schema and raster lookup."
     })
-
+# CROP SUITABILITY
+@app.route("/crop-suitability")
+def crop_suitability():
+    return render_template("crop_suitability.html")
 
 # WATER INTELLIGENCE
 @app.route("/water-intelligence")
