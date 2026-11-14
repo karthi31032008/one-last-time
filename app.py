@@ -66,6 +66,10 @@ def internal_error(error):
         "error": "Internal server error"
     }), 500
 
+@app.route("/crop-suitability")
+def crop_suitability():
+    return render_template("crop_suitability.html")
+
 
 # START SERVER
 if __name__ == "__main__":
