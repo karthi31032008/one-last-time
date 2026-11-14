@@ -1,1 +1,230 @@
 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{{ source.title }} | FarmShift AI</title>
+
+<style>
+*{box-sizing:border-box}
+
+body{
+    margin:0;
+    padding:30px;
+    font-family:Arial,sans-serif;
+    color:#eaf3ff;
+    background:#071426;
+}
+
+.container{max-width:1150px;margin:auto}
+
+.back{
+    color:#45d6a0;
+    text-decoration:none;
+    font-weight:bold;
+}
+
+.hero{
+    margin-top:30px;
+    padding:35px;
+    border:1px solid #24415e;
+    border-radius:18px;
+    background:linear-gradient(120deg,#123a36,#10243b,#0b192c);
+}
+
+.hero small{
+    color:#45d6a0;
+    letter-spacing:3px;
+}
+
+h1{font-size:36px;margin:15px 0}
+
+p{
+    color:#a9bdd2;
+    line-height:1.7;
+}
+
+.section-title{margin-top:35px}
+
+.grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
+    gap:17px;
+}
+
+.card{
+    background:#10243b;
+    border:1px solid #24415e;
+    padding:22px;
+    border-radius:14px;
+}
+
+.card h3{color:#45d6a0;margin-top:0}
+
+.card p{font-size:14px}
+
+.panel{
+    margin-top:25px;
+    padding:25px;
+    border-radius:15px;
+    background:#10243b;
+    border:1px solid #24415e;
+}
+
+.status{
+    color:#ffc66d;
+    line-height:1.7;
+}
+
+button{
+    padding:12px 20px;
+    background:#38c995;
+    border:0;
+    border-radius:8px;
+    cursor:pointer;
+    font-weight:bold;
+}
+
+#liveResult{
+    margin-top:18px;
+    color:#b9d9e8;
+    line-height:1.9;
+}
+
+.metric{
+    display:inline-block;
+    min-width:190px;
+    margin:7px;
+    padding:15px;
+    background:#0a1b2d;
+    border:1px solid #24415e;
+    border-radius:10px;
+}
+
+.metric strong{
+    display:block;
+    color:#45d6a0;
+    margin-bottom:8px;
+}
+
+@media(max-width:600px){
+    body{padding:16px}
+    .hero{padding:22px}
+    h1{font-size:27px}
+}
+</style>
+</head>
+
+<body>
+<div class="container">
+
+<a href="/#sources" class="back">← Back to Scientific Data Sources</a>
+
+<div class="hero">
+    <small>FARMSHIFT AI / EARTH INTELLIGENCE</small>
+    <h1>{{ source.title }}</h1>
+    <p>{{ source.description }}</p>
+    <p><strong>Category:</strong> {{ source.category }}</p>
+    <p><strong>Scientific Agency:</strong> {{ source.agency }}</p>
+</div>
+
+<h2 class="section-title">Scientific Observation Parameters</h2>
+
+<div class="grid">
+    {% for item in source.observations %}
+    <div class="card">
+        <h3>{{ item }}</h3>
+        <p>Scientific observation parameter from the selected resource.</p>
+    </div>
+    {% endfor %}
+</div>
+
+<h2 class="section-title">FarmShift AI Applications</h2>
+
+<div class="grid">
+    {% for item in source.applications %}
+    <div class="card">
+        <h3>{{ item }}</h3>
+        <p>Potential application within the FarmShift AI agricultural intelligence platform.</p>
+    </div>
+    {% endfor %}
+</div>
+
+<div class="panel">
+    <h2>Resource Connection Status</h2>
+    <p class="status">{{ source.status }}</p>
+
+    {% if source.integration == "live" %}
+        <button onclick="checkClimate()">Test NASA POWER Connection</button>
+        <div id="liveResult">
+            Click the button to retrieve climate observations.
+        </div>
+    {% else %}
+        <p>Scientific resource information is available on this page. Live measurements have not yet been connected.</p>
+    {% endif %}
+</div>
+
+<div class="panel">
+    <h2>Data Integrity</h2>
+    <p>
+        FarmShift AI distinguishes between resource descriptions,
+        retrieved observations and calculated agricultural indicators.
+        No live measurement or suitability score is displayed unless
+        the relevant dataset is successfully connected and processed.
+    </p>
+</div>
+
+</div>
+
+{% if source.integration == "live" %}
+<script>
+async function checkClimate(){
+
+    const result = document.getElementById("liveResult");
+
+    result.textContent = "Connecting to NASA POWER...";
+
+    try{
+        const response = await fetch(
+            "/api/crop-climate?lat=11.0168&lon=76.9558"
+        );
+
+        const data = await response.json();
+
+        if(!response.ok || data.status !== "success"){
+            throw new Error(data.message || "NASA POWER request failed");
+        }
+
+        result.innerHTML = `
+            <h3>NASA POWER Observations</h3>
+
+            <div class="metric">
+                <strong>Average Temperature</strong>
+                ${data.climate.average_temperature_c} °C
+            </div>
+
+            <div class="metric">
+                <strong>Total Rainfall</strong>
+                ${data.climate.total_rainfall_mm} mm
+            </div>
+
+            <div class="metric">
+                <strong>Average Humidity</strong>
+                ${data.climate.average_humidity_percent}%
+            </div>
+
+            <p>Source: ${data.source}</p>
+            <p>Period: ${data.period.start} to ${data.period.end}</p>
+        `;
+
+    }catch(error){
+        result.textContent = "Connection error: " + error.message;
+    }
+}
+</script>
+{% endif %}
+
+</body>
+</html>
+
