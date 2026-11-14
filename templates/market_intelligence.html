@@ -1,1 +1,367 @@
 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Market Intelligence | FarmShift AI</title>
+
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+}
+
+body {
+    background: #08151c;
+    color: #eef7f4;
+}
+
+header {
+    padding: 22px 5%;
+    background: #10252b;
+    border-bottom: 1px solid #29443e;
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.logo {
+    color: #67d6a7;
+    font-size: 22px;
+    font-weight: bold;
+}
+
+header a {
+    color: #b5d0c7;
+    text-decoration: none;
+}
+
+.container {
+    width: 90%;
+    max-width: 1200px;
+    margin: 35px auto;
+}
+
+.tag {
+    color: #67d6a7;
+    letter-spacing: 2px;
+    font-size: 12px;
+    margin-bottom: 12px;
+}
+
+h1 {
+    font-size: 34px;
+    margin-bottom: 12px;
+}
+
+.subtitle {
+    color: #a5bbb5;
+    line-height: 1.7;
+    margin-bottom: 28px;
+}
+
+.cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+    margin-bottom: 25px;
+}
+
+.card, .panel {
+    background: #112a30;
+    border: 1px solid #294b49;
+    border-radius: 13px;
+    padding: 20px;
+}
+
+.card small {
+    color: #a5bbb5;
+}
+
+.card h2 {
+    color: #67d6a7;
+    margin-top: 12px;
+    font-size: 22px;
+}
+
+.panel {
+    margin-bottom: 22px;
+}
+
+.panel h2 {
+    margin-bottom: 15px;
+    font-size: 20px;
+}
+
+.controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin: 18px 0;
+}
+
+select, button {
+    padding: 12px;
+    border-radius: 8px;
+    border: 1px solid #355b56;
+    background: #091c22;
+    color: white;
+}
+
+button {
+    background: #168568;
+    border: none;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+button:hover {
+    background: #20a984;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+}
+
+th, td {
+    padding: 15px 12px;
+    text-align: left;
+    border-bottom: 1px solid #29443e;
+}
+
+th {
+    color: #67d6a7;
+    font-size: 13px;
+}
+
+td {
+    color: #d0e2dc;
+    font-size: 14px;
+}
+
+.status {
+    color: #67d6a7;
+    font-size: 12px;
+}
+
+.note {
+    color: #8fa9a1;
+    font-size: 13px;
+    line-height: 1.7;
+    margin-top: 15px;
+}
+
+.insight {
+    padding: 17px;
+    background: #0b2025;
+    border-left: 3px solid #67d6a7;
+    border-radius: 8px;
+    color: #c5dcd3;
+    line-height: 1.7;
+    margin-top: 12px;
+}
+
+footer {
+    text-align: center;
+    padding: 25px;
+    color: #809a91;
+    font-size: 13px;
+}
+
+@media(max-width:600px) {
+    h1 { font-size: 27px; }
+    .table-wrap { overflow-x: auto; }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <div class="logo">FARMSHIFT AI</div>
+    <a href="/">← Back to Dashboard</a>
+</header>
+
+<main class="container">
+
+    <div class="tag">MODULE 05 / AGRICULTURAL ECONOMICS</div>
+
+    <h1>Market Intelligence</h1>
+
+    <p class="subtitle">
+        Explore agricultural market trends, compare crop prices
+        and understand market opportunities for smarter selling decisions.
+    </p>
+
+    <section class="cards">
+        <div class="card">
+            <small>Market Coverage</small>
+            <h2>India</h2>
+        </div>
+
+        <div class="card">
+            <small>Price Unit</small>
+            <h2>₹ / Quintal</h2>
+        </div>
+
+        <div class="card">
+            <small>Crop Categories</small>
+            <h2>4 Crops</h2>
+        </div>
+
+        <div class="card">
+            <small>Market Insight</small>
+            <h2>Demo Mode</h2>
+        </div>
+    </section>
+
+    <section class="panel">
+        <h2>📊 Crop Price Explorer</h2>
+
+        <p class="note">
+            Select a crop to explore sample market prices.
+        </p>
+
+        <div class="controls">
+            <select id="cropSelect" onchange="showCrop()">
+                <option value="rice">Rice</option>
+                <option value="wheat">Wheat</option>
+                <option value="cotton">Cotton</option>
+                <option value="maize">Maize</option>
+            </select>
+
+            <button onclick="showCrop()">Analyze Market</button>
+        </div>
+
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Market</th>
+                        <th>Crop</th>
+                        <th>Sample Price</th>
+                        <th>Market Signal</th>
+                    </tr>
+                </thead>
+
+                <tbody id="priceTable"></tbody>
+            </table>
+        </div>
+
+        <p class="note" id="priceNote">
+            Illustrative demo values only. Not live mandi prices.
+        </p>
+    </section>
+
+    <section class="panel">
+        <h2>📈 Market Opportunity Analysis</h2>
+
+        <div class="insight" id="insight">
+            Select a crop to view its sample market comparison.
+        </div>
+    </section>
+
+    <section class="panel">
+        <h2>🌾 Smart Selling Guidance</h2>
+
+        <div class="insight">
+            Compare prices across nearby markets before choosing
+            where to sell your produce.
+        </div>
+
+        <div class="insight">
+            Check transportation costs, quality requirements and
+            market demand before making a selling decision.
+        </div>
+
+        <div class="insight">
+            Track price trends over time instead of relying on
+            a single day's market price.
+        </div>
+    </section>
+
+    <p class="note">
+        Data status: Demonstration dataset.
+        These sample prices are not official market quotations.
+        Live integration with Agmarknet or e-NAM is a separate step.
+    </p>
+
+</main>
+
+<footer>
+    FARMSHIFT AI · Agricultural Market Intelligence
+</footer>
+
+<script>
+const marketData = {
+    rice: [
+        {market:"Coimbatore", price:2450, signal:"Sample"},
+        {market:"Erode", price:2380, signal:"Sample"},
+        {market:"Madurai", price:2520, signal:"Sample"}
+    ],
+
+    wheat: [
+        {market:"Coimbatore", price:2650, signal:"Sample"},
+        {market:"Erode", price:2580, signal:"Sample"},
+        {market:"Madurai", price:2700, signal:"Sample"}
+    ],
+
+    cotton: [
+        {market:"Coimbatore", price:7200, signal:"Sample"},
+        {market:"Erode", price:7450, signal:"Sample"},
+        {market:"Madurai", price:7100, signal:"Sample"}
+    ],
+
+    maize: [
+        {market:"Coimbatore", price:2200, signal:"Sample"},
+        {market:"Erode", price:2300, signal:"Sample"},
+        {market:"Madurai", price:2150, signal:"Sample"}
+    ]
+};
+
+function showCrop() {
+    const crop = document.getElementById("cropSelect").value;
+    const records = marketData[crop];
+
+    const table = document.getElementById("priceTable");
+
+    table.innerHTML = records.map(item => `
+        <tr>
+            <td>${item.market}</td>
+            <td>${crop.charAt(0).toUpperCase() + crop.slice(1)}</td>
+            <td>₹${item.price.toLocaleString("en-IN")}</td>
+            <td class="status">${item.signal}</td>
+        </tr>
+    `).join("");
+
+    const prices = records.map(item => item.price);
+    const highest = Math.max(...prices);
+    const lowest = Math.min(...prices);
+    const average = Math.round(
+        prices.reduce((sum, value) => sum + value, 0) / prices.length
+    );
+
+    const best = records.find(item => item.price === highest);
+
+    document.getElementById("insight").innerHTML = `
+        <strong>${crop.toUpperCase()} MARKET SUMMARY</strong><br><br>
+        Highest sample price: ₹${highest.toLocaleString("en-IN")} / quintal<br>
+        Lowest sample price: ₹${lowest.toLocaleString("en-IN")} / quintal<br>
+        Average sample price: ₹${average.toLocaleString("en-IN")} / quintal<br>
+        Highest sample value: ${best.market}<br><br>
+        This is a sample comparison, not a live selling recommendation.
+    `;
+}
+
+showCrop();
+</script>
+
+</body>
+</html>
+
