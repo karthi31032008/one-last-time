@@ -9,91 +9,324 @@
 <style>
 *{box-sizing:border-box}
 body{
-margin:0;background:#061722;color:#e8faff;
+margin:0;background:#061711;color:#e9f8ef;
 font-family:Arial,sans-serif;padding:25px
 }
-main{max-width:1000px;margin:auto}
-h1{color:#42d9f5}
+main{max-width:1150px;margin:auto}
+header{
+display:flex;justify-content:space-between;
+align-items:center;flex-wrap:wrap;gap:15px
+}
+h1{color:#55e69a;font-size:30px}
+.subtitle{color:#9bb9a5;line-height:1.7;font-size:13px}
+.tag{
+border:1px solid #32754c;padding:9px 13px;
+border-radius:20px;color:#70e6a5;font-size:11px
+}
 .panel{
-background:#102b3a;padding:22px;
-border:1px solid #24617b;border-radius:15px;
-margin:20px 0
+background:#10271b;border:1px solid #28553a;
+padding:22px;border-radius:14px;margin:20px 0
 }
-input,button{
-padding:13px;margin:7px 0;
-width:100%;border-radius:8px;border:0
+.inputs{
+display:grid;grid-template-columns:1fr 1fr;
+gap:15px
 }
-button{background:#20c5e7;font-weight:bold;cursor:pointer}
-.metric{font-size:30px;color:#55e8f7}
-small{color:#b5d4df}
+label{display:block;color:#a9c9b3;font-size:12px;margin-bottom:8px}
+input{
+width:100%;padding:13px;background:#071910;
+border:1px solid #376248;color:white;border-radius:8px
+}
+button{
+margin-top:17px;width:100%;padding:14px;
+background:#37d482;color:#062013;
+border:0;border-radius:8px;font-weight:bold;
+cursor:pointer
+}
+button:disabled{opacity:.6;cursor:wait}
+.metrics{
+display:grid;grid-template-columns:repeat(3,1fr);
+gap:14px;margin:20px 0
+}
+.metric{
+background:#10271b;border:1px solid #28553a;
+padding:20px;border-radius:12px
+}
+.metric small{color:#91b49c;font-size:10px;letter-spacing:1px}
+.metric h2{font-size:27px;color:#60e8a0;margin:13px 0}
+.metric p{color:#9bb9a5;font-size:11px}
+.chart{
+height:220px;display:flex;align-items:flex-end;
+gap:4px;padding:20px 5px 5px;
+border-bottom:1px solid #376248;
+overflow:hidden
+}
+.bar-wrap{
+flex:1;min-width:3px;height:100%;
+display:flex;align-items:flex-end;
+position:relative
+}
+.bar{
+width:100%;min-height:2px;
+background:linear-gradient(0deg,#168b58,#64e8a0);
+border-radius:4px 4px 0 0
+}
+.bar:hover{background:#a0ffd0}
+.legend{
+display:flex;justify-content:space-between;
+color:#91b49c;font-size:10px;margin-top:10px
+}
+.status{
+padding:13px;background:#0a1d12;
+border-radius:8px;color:#a9dfbd;
+font-size:12px;line-height:1.7
+}
+.note{
+border-left:3px solid #47d98a;
+padding:14px;background:#0b1e13;
+color:#9bb9a5;font-size:11px;line-height:1.8
+}
+.hidden{display:none}
+@media(max-width:650px){
+body{padding:14px}
+.metrics{grid-template-columns:1fr}
+.inputs{grid-template-columns:1fr}
+h1{font-size:24px}
+}
 </style>
 </head>
 
 <body>
 <main>
+
+<header>
+<div>
+<div class="tag">MODULE 02 · HYDROLOGICAL INTELLIGENCE</div>
 <h1>💧 Water Intelligence</h1>
-<p>Satellite-based precipitation monitoring</p>
+<p class="subtitle">
+Observe precipitation patterns and rainfall behaviour
+using NASA Earth observation data.
+</p>
+</div>
+<div class="tag">NASA POWER DATA</div>
+</header>
 
 <section class="panel">
-<h3>Field Coordinates</h3>
-<input id="lat" type="number" step="any"
-placeholder="Latitude" value="11.0168">
-<input id="lon" type="number" step="any"
-placeholder="Longitude" value="76.9558">
+<h3>Field Observation Coordinates</h3>
 
-<button onclick="loadWater()">Analyze Water Data</button>
-<div id="result">Waiting for NASA data...</div>
+<div class="inputs">
+<div>
+<label>Latitude</label>
+<input id="lat" type="number" step="any" value="11.0168">
+</div>
+<div>
+<label>Longitude</label>
+<input id="lon" type="number" step="any" value="76.9558">
+</div>
+</div>
+
+<button id="analyzeBtn" onclick="loadWater()">
+GENERATE RAINFALL INTELLIGENCE →
+</button>
+
+<p id="status" class="status">
+Waiting for NASA POWER observations...
+</p>
 </section>
 
+<div id="dashboard" class="hidden">
+
+<div class="metrics">
+<div class="metric">
+<small>30-DAY ACCUMULATION</small>
+<h2 id="total">--</h2>
+<p>Total precipitation (mm)</p>
+</div>
+
+<div class="metric">
+<small>DAILY AVERAGE</small>
+<h2 id="average">--</h2>
+<p>Precipitation (mm/day)</p>
+</div>
+
+<div class="metric">
+<small>RAINY DAYS</small>
+<h2 id="rainy">--</h2>
+<p>Days with precipitation above 0 mm</p>
+</div>
+
+<div class="metric">
+<small>DRY DAYS</small>
+<h2 id="dry">--</h2>
+<p>Days with zero precipitation</p>
+</div>
+
+<div class="metric">
+<small>PEAK DAILY RAINFALL</small>
+<h2 id="peak">--</h2>
+<p>Highest daily precipitation (mm)</p>
+</div>
+
+<div class="metric">
+<small>VALID OBSERVATIONS</small>
+<h2 id="valid">--</h2>
+<p>Available daily records</p>
+</div>
+</div>
+
+<section class="panel">
+<h3>Daily Precipitation Pattern</h3>
+<p class="subtitle">
+Daily rainfall distribution across the selected 30-day observation period.
+</p>
+
+<div id="chart" class="chart"></div>
+
+<div class="legend">
+<span id="chartStart">Start date</span>
+<span id="chartEnd">End date</span>
+</div>
+</section>
+
+<section class="panel">
+<h3>Rainfall Intelligence</h3>
+<p id="rainfallInsight" class="status"></p>
+<p id="period" class="subtitle"></p>
+</section>
+
+<div class="note">
+<strong>Scientific data note:</strong>
+Source: NASA POWER, parameter PRECTOTCORR.
+This dashboard displays available daily precipitation observations.
+Rainfall is not the same as groundwater availability or soil moisture.
+NASA SMAP soil moisture integration is a separate development step.
+</div>
+
+</div>
 </main>
 
 <script>
 async function loadWater(){
-const lat=document.getElementById("lat").value;
-const lon=document.getElementById("lon").value;
-const result=document.getElementById("result");
 
-if(!lat || !lon){
-result.innerText="Enter coordinates";
+const lat=Number(document.getElementById("lat").value);
+const lon=Number(document.getElementById("lon").value);
+
+const status=document.getElementById("status");
+const dashboard=document.getElementById("dashboard");
+const button=document.getElementById("analyzeBtn");
+
+if(!Number.isFinite(lat)||!Number.isFinite(lon)||
+lat < -90||lat > 90||lon < -180||lon > 180){
+status.textContent="Please enter valid latitude and longitude.";
 return;
 }
 
-result.innerText="Connecting to NASA POWER...";
+button.disabled=true;
+status.textContent="Retrieving daily observations from NASA POWER...";
+dashboard.classList.add("hidden");
 
 try{
+
 const end=new Date();
 end.setUTCDate(end.getUTCDate()-5);
+
 const start=new Date(end);
 start.setUTCDate(start.getUTCDate()-29);
 
 const fmt=d=>d.toISOString().slice(0,10).replaceAll("-","");
-const url=`https://power.larc.nasa.gov/api/temporal/daily/point?parameters=PRECTOTCORR&community=AG&longitude=${encodeURIComponent(lon)}&latitude=${encodeURIComponent(lat)}&start=${fmt(start)}&end=${fmt(end)}&format=JSON`;
+
+const url=new URL(
+"https://power.larc.nasa.gov/api/temporal/daily/point"
+);
+
+url.search=new URLSearchParams({
+parameters:"PRECTOTCORR",
+community:"AG",
+longitude:lon,
+latitude:lat,
+start:fmt(start),
+end:fmt(end),
+format:"JSON"
+});
 
 const response=await fetch(url);
-if(!response.ok)throw Error("NASA API unavailable");
+
+if(!response.ok){
+throw new Error("NASA POWER returned HTTP "+response.status);
+}
 
 const json=await response.json();
-const values=Object.values(json.properties.parameter.PRECTOTCORR)
-.filter(v=>Number.isFinite(v)&&v>=0);
 
-if(!values.length)throw Error("No precipitation data");
+const records=json.properties.parameter.PRECTOTCORR;
+
+const entries=Object.entries(records)
+.map(([date,value])=>({date,value:Number(value)}))
+.filter(item=>Number.isFinite(item.value)&&item.value>=0);
+
+if(!entries.length){
+throw new Error("No valid precipitation observations found.");
+}
+
+const values=entries.map(item=>item.value);
 
 const total=values.reduce((a,b)=>a+b,0);
-const avg=total/values.length;
+const average=total/values.length;
+const rainy=values.filter(v=>v>0).length;
+const dry=values.filter(v=>v===0).length;
+const peak=Math.max(...values);
+const peakRecord=entries.find(item=>item.value===peak);
 
-result.innerHTML=`
-<h2>NASA Precipitation Analysis</h2>
-<div class="metric">${total.toFixed(2)} mm</div>
-<p>30-day accumulated precipitation (available days)</p>
-<p>Daily average: ${avg.toFixed(2)} mm/day</p>
-<p>Valid observations: ${values.length}</p>
-<small>Source: NASA POWER API | Historical daily data</small>
-`;
-}catch(e){
-result.innerText="Data error: "+e.message;
+document.getElementById("total").textContent=total.toFixed(2)+" mm";
+document.getElementById("average").textContent=average.toFixed(2);
+document.getElementById("rainy").textContent=rainy;
+document.getElementById("dry").textContent=dry;
+document.getElementById("peak").textContent=peak.toFixed(2)+" mm";
+document.getElementById("valid").textContent=entries.length;
+
+const chart=document.getElementById("chart");
+chart.innerHTML="";
+
+const maxValue=Math.max(peak,1);
+
+entries.forEach(item=>{
+const wrap=document.createElement("div");
+wrap.className="bar-wrap";
+wrap.title=item.date+": "+item.value.toFixed(2)+" mm";
+
+const bar=document.createElement("div");
+bar.className="bar";
+bar.style.height=Math.max(2,(item.value/maxValue)*100)+"%";
+
+wrap.appendChild(bar);
+chart.appendChild(wrap);
+});
+
+document.getElementById("chartStart").textContent=entries[0].date;
+document.getElementById("chartEnd").textContent=entries[entries.length-1].date;
+
+document.getElementById("rainfallInsight").textContent=
+"Peak rainfall: "+peak.toFixed(2)+" mm on "+
+peakRecord.date+". "+
+rainy+" rainy days and "+dry+
+" zero-precipitation days were found in "+
+entries.length+" valid observations.";
+
+document.getElementById("period").textContent=
+"Observation period: "+entries[0].date+
+" to "+entries[entries.length-1].date+
+" | Coordinates: "+lat+", "+lon;
+
+dashboard.classList.remove("hidden");
+status.textContent="NASA POWER observations retrieved successfully.";
+
+}catch(error){
+
+status.textContent="Data retrieval failed: "+error.message;
+
+}finally{
+button.disabled=false;
 }
 }
 </script>
+
 </body>
 </html>
-
