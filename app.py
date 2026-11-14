@@ -471,7 +471,7 @@ def market_intelligence():
 # DATA INTELLIGENCE
 @app.route("/data-intelligence")
 def data_intelligence():
-    return render_template("data_intelligence.html")
+    return redirect("/#sources")
 
 
 
