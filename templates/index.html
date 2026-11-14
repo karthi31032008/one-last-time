@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FarmShift AI | Agricultural Intelligence</title>
+
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+
+<body>
+
+<div class="app">
+
+<!-- SIDEBAR -->
+<aside class="sidebar" id="sidebar">
+
+    <div class="brand">
+        <div class="brand-icon">🌍</div>
+        <div>
+            <h2>FarmShift <span>AI</span></h2>
+            <small>EARTH INTELLIGENCE</small>
+        </div>
+    </div>
+
+    <div class="menu-label">WORKSPACE</div>
+
+    <nav>
+        <a href="#overview" class="nav-link active">◈ Overview</a>
+        <a href="#suitability" class="nav-link">🌱 Crop Suitability</a>
+        <a href="#water" class="nav-link">💧 Water Intelligence</a>
+        <a href="#climate" class="nav-link">☁ Climate Analysis</a>
+        <a href="#vegetation" class="nav-link">🛰 Land Observation</a>
+        <a href="#market" class="nav-link">📈 Market Intelligence</a>
+    </nav>
+
+    <div class="menu-label">SYSTEM</div>
+
+    <nav>
+        <a href="#sources" class="nav-link">◉ Data Sources</a>
+        <a href="#about" class="nav-link">ⓘ About Platform</a>
+    </nav>
+
+    <div class="sidebar-bottom">
+        <div class="status-dot"></div>
+        <span>FarmShift AI Platform</span>
+    </div>
+
+</aside>
+
+<!-- MAIN -->
+<main class="main">
+
+<header class="topbar">
+    <button class="menu-btn" id="menuBtn">☰</button>
+
+    <div class="breadcrumb">
+        Earth Intelligence / <span>Overview</span>
+    </div>
+
+    <div class="top-right">
+        <span class="live-label">● PLATFORM PREVIEW</span>
+        <div class="profile">FS</div>
+    </div>
+</header>
+
+<!-- OVERVIEW -->
+<section id="overview" class="page-section">
+
+    <div class="hero">
+        <div class="hero-content">
+            <div class="eyebrow">AGRICULTURAL EARTH INTELLIGENCE</div>
+
+            <h1>See the Earth.<br>
+            Understand the Land.<br>
+            <span>Grow Smarter.</span></h1>
+
+            <p>
+            An integrated intelligence platform combining
+            satellite observations, agro-ecological suitability,
+            climate, water and agricultural market information
+            for informed crop rotation planning.
+            </p>
+
+            <a href="#suitability" class="primary-btn">
+                Explore Intelligence →
+            </a>
+        </div>
+
+        <div class="earth-visual">
+            <div class="orbit orbit-one"></div>
+            <div class="orbit orbit-two"></div>
+            <div class="earth">🌎</div>
+            <div class="orbit-label">EARTH OBSERVATION</div>
+        </div>
+    </div>
+
+    <div class="section-heading">
+        <div>
+            <small>INTELLIGENCE MODULES</small>
+            <h2>Explore Your Agricultural Systems</h2>
+        </div>
+        <span class="section-tag">06 MODULES</span>
+    </div>
+
+    <div class="module-grid">
+
+        <a href="#suitability" class="module-card">
+            <div class="module-icon green">🌱</div>
+            <span class="module-number">01 / AGRONOMY</span>
+            <h3>Crop Suitability</h3>
+            <p>Evaluate agro-climatic suitability, soil constraints and crop rotation potential.</p>
+            <span class="module-link">Explore module →</span>
+        </a>
+
+        <a href="#water" class="module-card">
+            <div class="module-icon blue">💧</div>
+            <span class="module-number">02 / HYDROLOGY</span>
+            <h3>Water Intelligence</h3>
+            <p>Analyze water availability, groundwater, streamflow and evapotranspiration.</p>
+            <span class="module-link">Explore module →</span>
+        </a>
+
+        <a href="#climate" class="module-card">
+            <div class="module-icon orange">☁</div>
+            <span class="module-number">03 / CLIMATE</span>
+            <h3>Climate Analysis</h3>
+            <p>Study historical climate patterns and environmental conditions.</p>
+            <span class="module-link">Explore module →</span>
+        </a>
+
+        <a href="#vegetation" class="module-card">
+            <div class="module-icon purple">🛰</div>
+            <span class="module-number">04 / REMOTE SENSING</span>
+            <h3>Land Observation</h3>
+            <p>Explore vegetation conditions, canopy structure and satellite imagery.</p>
+            <span class="module-link">Explore module →</span>
+        </a>
+
+        <a href="#market" class="module-card">
+            <div class="module-icon yellow">📈</div>
+            <span class="module-number">05 / ECONOMICS</span>
+            <h3>Market Intelligence</h3>
+            <p>Evaluate crop production history, market prices and regional demand.</p>
+            <span class="module-link">Explore module →</span>
+        </a>
+
+        <a href="#sources" class="module-card">
+            <div class="module-icon cyan">🔬</div>
+            <span class="module-number">06 / DATA SCIENCE</span>
+            <h3>Data Intelligence</h3>
+            <p>Connect scientific datasets and build evidence-based agricultural insights.</p>
+            <span class="module-link">Explore module →</span>
+        </a>
+
+    </div>
+</section>
+
+<!-- MODULE SECTIONS -->
+<section id="suitability" class="detail-section">
+    <div class="section-heading">
+        <small>MODULE 01</small>
+        <h2>Crop Suitability Intelligence</h2>
+    </div>
+    <p>Analyze crop suitability using FAO Global Agro-Ecological Zones data.</p>
+    <div class="placeholder">GAEZ data integration pending</div>
+</section>
+
+<section id="water" class="detail-section">
+    <div class="section-heading">
+        <small>MODULE 02</small>
+        <h2>Water Intelligence</h2>
+    </div>
+    <p>Explore groundwater, precipitation and evapotranspiration observations.</p>
+    <div class="placeholder">USGS / CoCoRaHS / OpenET integration pending</div>
+</section>
+
+<section id="climate" class="detail-section">
+    <div class="section-heading">
+        <small>MODULE 03</small>
+        <h2>Climate Analysis</h2>
+    </div>
+    <p>Explore climate history and environmental variables using ERA5.</p>
+    <div class="placeholder">ERA5 integration pending</div>
+</section>
+
+<section id="vegetation" class="detail-section">
+    <div class="section-heading">
+        <small>MODULE 04</small>
+        <h2>Land Observation</h2>
+    </div>
+    <p>Explore Sentinel-2 imagery, vegetation indicators and GEDI observations.</p>
+    <div class="placeholder">Satellite data integration pending</div>
+</section>
+
+<section id="market" class="detail-section">
+    <div class="section-heading">
+        <small>MODULE 05</small>
+        <h2>Market Intelligence</h2>
+    </div>
+    <p>Explore agricultural statistics, crop production and market information.</p>
+    <div class="placeholder">USDA data integration pending</div>
+</section>
+
+<section id="sources" class="detail-section">
+    <div class="section-heading">
+        <small>MODULE 06</small>
+        <h2>Scientific Data Sources</h2>
+    </div>
+    <p>Integrated data source management and availability verification.</p>
+    <div class="placeholder">Resource connection setup pending</div>
+</section>
+
+<section id="about" class="detail-section">
+    <div class="section-heading">
+        <small>ABOUT</small>
+        <h2>FarmShift AI</h2>
+    </div>
+    <p>An agricultural intelligence platform designed to connect Earth observations and agricultural decision-making.</p>
+</section>
+
+<footer>
+    FARM SHIFT AI · EARTH OBSERVATION & AGRICULTURAL INTELLIGENCE
+</footer>
+
+</main>
+</div>
+
+<script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+</html>
+
