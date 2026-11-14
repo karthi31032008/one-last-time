@@ -1,1 +1,523 @@
 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Data Intelligence | FarmShift AI</title>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+}
+
+body {
+    background: #07151c;
+    color: #edf8f5;
+}
+
+header {
+    background: #102831;
+    padding: 22px 5%;
+    border-bottom: 1px solid #294b50;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.logo {
+    font-size: 22px;
+    font-weight: bold;
+    color: #64ddbd;
+}
+
+header a {
+    color: #b8d4d0;
+    text-decoration: none;
+}
+
+.container {
+    width: 90%;
+    max-width: 1250px;
+    margin: 35px auto;
+}
+
+.tag {
+    color: #64ddbd;
+    letter-spacing: 2px;
+    font-size: 12px;
+    margin-bottom: 12px;
+}
+
+h1 {
+    font-size: 34px;
+    margin-bottom: 12px;
+}
+
+.subtitle {
+    color: #a5bfbd;
+    line-height: 1.7;
+    max-width: 800px;
+    margin-bottom: 28px;
+}
+
+.panel {
+    background: #102831;
+    border: 1px solid #294b50;
+    border-radius: 14px;
+    padding: 22px;
+    margin-bottom: 22px;
+}
+
+.panel h2 {
+    margin-bottom: 15px;
+    font-size: 19px;
+}
+
+.metrics {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+    gap: 15px;
+    margin-bottom: 22px;
+}
+
+.metric {
+    background: #102831;
+    border: 1px solid #294b50;
+    border-radius: 13px;
+    padding: 20px;
+}
+
+.metric small {
+    color: #a5bfbd;
+}
+
+.metric h2 {
+    color: #64ddbd;
+    font-size: 25px;
+    margin-top: 12px;
+}
+
+.metric p {
+    color: #91aaa7;
+    font-size: 12px;
+    margin-top: 7px;
+}
+
+.controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    align-items: center;
+    margin: 18px 0;
+}
+
+input, button {
+    background: #081d25;
+    color: white;
+    border: 1px solid #35565b;
+    border-radius: 8px;
+    padding: 12px 15px;
+}
+
+button {
+    background: #13866f;
+    border: none;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+button:hover {
+    background: #1aa88b;
+}
+
+.chart-container {
+    position: relative;
+    height: 330px;
+    width: 100%;
+}
+
+.status {
+    color: #64ddbd;
+    font-size: 13px;
+    line-height: 1.7;
+}
+
+.note {
+    color: #91aaa7;
+    font-size: 13px;
+    line-height: 1.7;
+    margin-top: 14px;
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+    gap: 15px;
+}
+
+.data-card {
+    background: #0a2028;
+    padding: 18px;
+    border: 1px solid #294b50;
+    border-radius: 11px;
+}
+
+.data-card h3 {
+    color: #64ddbd;
+    margin-bottom: 10px;
+}
+
+.data-card p {
+    color: #a5bfbd;
+    font-size: 14px;
+    line-height: 1.7;
+}
+
+footer {
+    text-align: center;
+    color: #819d99;
+    padding: 25px;
+    font-size: 13px;
+}
+
+@media(max-width:600px) {
+    h1 { font-size: 27px; }
+    .chart-container { height: 270px; }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <div class="logo">FARMSHIFT AI</div>
+    <a href="/">← Back to Dashboard</a>
+</header>
+
+<main class="container">
+
+    <div class="tag">MODULE 06 / DATA SCIENCE</div>
+
+    <h1>Data Intelligence Center</h1>
+
+    <p class="subtitle">
+        Transform Earth observation and environmental datasets
+        into meaningful agricultural insights. Explore climate
+        indicators and understand changing environmental patterns.
+    </p>
+
+    <section class="panel">
+        <h2>🌍 Observation Location</h2>
+
+        <div class="controls">
+            <label for="latitude">Latitude</label>
+            <input type="number" id="latitude"
+                   value="11.0168" step="0.0001">
+
+            <label for="longitude">Longitude</label>
+            <input type="number" id="longitude"
+                   value="76.9558" step="0.0001">
+
+            <button onclick="loadData()">Analyze Data</button>
+        </div>
+
+        <p class="note">
+            Default location: Coimbatore, Tamil Nadu.
+            You can enter another location's coordinates.
+        </p>
+    </section>
+
+    <section class="metrics">
+        <div class="metric">
+            <small>Average Temperature</small>
+            <h2 id="temperature">--</h2>
+            <p>°C · NASA POWER</p>
+        </div>
+
+        <div class="metric">
+            <small>Total Rainfall</small>
+            <h2 id="rainfall">--</h2>
+            <p>mm · Selected period</p>
+        </div>
+
+        <div class="metric">
+            <small>Average Humidity</small>
+            <h2 id="humidity">--</h2>
+            <p>% · NASA POWER</p>
+        </div>
+
+        <div class="metric">
+            <small>Average Wind Speed</small>
+            <h2 id="wind">--</h2>
+            <p>m/s · NASA POWER</p>
+        </div>
+    </section>
+
+    <section class="panel">
+        <h2>📊 Environmental Data Visualization</h2>
+
+        <p class="note">
+            Daily temperature and rainfall observations.
+        </p>
+
+        <div class="chart-container">
+            <canvas id="climateChart"></canvas>
+        </div>
+    </section>
+
+    <section class="panel">
+        <h2>🔬 Dataset Intelligence</h2>
+
+        <div class="grid">
+            <div class="data-card">
+                <h3>NASA POWER</h3>
+                <p>
+                    Atmospheric and surface meteorological
+                    observations for climate analysis.
+                </p>
+            </div>
+
+            <div class="data-card">
+                <h3>Earth Observation</h3>
+                <p>
+                    Satellite imagery can support land,
+                    vegetation and environmental monitoring.
+                </p>
+            </div>
+
+            <div class="data-card">
+                <h3>Agricultural Analytics</h3>
+                <p>
+                    Environmental indicators can help evaluate
+                    agricultural conditions and potential risks.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <section class="panel">
+        <h2>Data Processing Status</h2>
+        <p class="status" id="dataStatus">
+            Waiting for data request...
+        </p>
+
+        <p class="note">
+            Source: NASA POWER Daily API.
+            The latest available dates may be delayed.
+            Results depend on API availability and valid coordinates.
+        </p>
+    </section>
+
+</main>
+
+<footer>
+    FARMSHIFT AI · Data Intelligence Platform
+</footer>
+
+<script>
+let climateChart;
+
+function getDateString(date) {
+    return date.toISOString().slice(0, 10).replaceAll("-", "");
+}
+
+function showChart(labels, temperatures, rainfall) {
+    const ctx = document.getElementById("climateChart");
+
+    if (climateChart) {
+        climateChart.destroy();
+    }
+
+    climateChart = new Chart(ctx, {
+        type: "line",
+        data: {
+            labels: labels,
+            datasets: [
+                {
+                    label: "Temperature (°C)",
+                    data: temperatures,
+                    borderColor: "#64ddbd",
+                    backgroundColor: "rgba(100,221,189,0.12)",
+                    yAxisID: "y",
+                    tension: 0.35
+                },
+                {
+                    label: "Rainfall (mm/day)",
+                    data: rainfall,
+                    borderColor: "#62a9ff",
+                    backgroundColor: "rgba(98,169,255,0.12)",
+                    yAxisID: "y1",
+                    tension: 0.35
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            interaction: {
+                mode: "index",
+                intersect: false
+            },
+            plugins: {
+                legend: {
+                    labels: { color: "#dcebe8" }
+                }
+            },
+            scales: {
+                x: {
+                    ticks: { color: "#a5bfbd" },
+                    grid: { color: "#29434a" }
+                },
+                y: {
+                    position: "left",
+                    title: {
+                        display: true,
+                        text: "Temperature °C",
+                        color: "#64ddbd"
+                    },
+                    ticks: { color: "#a5bfbd" },
+                    grid: { color: "#29434a" }
+                },
+                y1: {
+                    position: "right",
+                    title: {
+                        display: true,
+                        text: "Rainfall mm",
+                        color: "#62a9ff"
+                    },
+                    ticks: { color: "#a5bfbd" },
+                    grid: { drawOnChartArea: false }
+                }
+            }
+        }
+    });
+}
+
+async function loadData() {
+    const lat = Number(document.getElementById("latitude").value);
+    const lon = Number(document.getElementById("longitude").value);
+    const status = document.getElementById("dataStatus");
+
+    if (!Number.isFinite(lat) || !Number.isFinite(lon) ||
+        lat < -90 || lat > 90 || lon < -180 || lon > 180) {
+        status.textContent = "Please enter valid latitude and longitude.";
+        return;
+    }
+
+    status.textContent = "Connecting to NASA POWER API...";
+
+    const end = new Date();
+    end.setUTCDate(end.getUTCDate() - 5);
+
+    const start = new Date(end);
+    start.setUTCDate(start.getUTCDate() - 29);
+
+    const startDate = getDateString(start);
+    const endDate = getDateString(end);
+
+    const url =
+        "https://power.larc.nasa.gov/api/temporal/daily/point" +
+        "?parameters=T2M,PRECTOTCORR,RH2M,WS2M" +
+        "&community=AG" +
+        "&longitude=" + lon +
+        "&latitude=" + lat +
+        "&start=" + startDate +
+        "&end=" + endDate +
+        "&format=JSON";
+
+    try {
+        const response = await fetch(url);
+
+        if (!response.ok) {
+            throw new Error("NASA API response: " + response.status);
+        }
+
+        const result = await response.json();
+        const parameters = result.properties.parameter;
+
+        const temp = parameters.T2M;
+        const rain = parameters.PRECTOTCORR;
+        const humid = parameters.RH2M;
+        const windSpeed = parameters.WS2M;
+
+        const keys = Object.keys(temp).filter(key =>
+            Number.isFinite(Number(temp[key])) &&
+            Number(temp[key]) > -900
+        );
+
+        if (!keys.length) {
+            throw new Error("No valid observations returned.");
+        }
+
+        const average = values => {
+            const valid = values.filter(v =>
+                Number.isFinite(Number(v)) && Number(v) > -900
+            );
+
+            return valid.length
+                ? valid.reduce((sum, v) => sum + Number(v), 0) / valid.length
+                : null;
+        };
+
+        const temperatures = keys.map(key =>
+            Number(temp[key]) > -900 ? Number(temp[key]) : null
+        );
+
+        const rainfall = keys.map(key =>
+            Number(rain[key]) > -900 ? Number(rain[key]) : null
+        );
+
+        const totalRain = rainfall
+            .filter(v => v !== null)
+            .reduce((sum, v) => sum + v, 0);
+
+        const avgTemp = average(keys.map(key => temp[key]));
+        const avgHumidity = average(keys.map(key => humid[key]));
+        const avgWind = average(keys.map(key => windSpeed[key]));
+
+        document.getElementById("temperature").textContent =
+            avgTemp === null ? "--" : avgTemp.toFixed(1) + "°C";
+
+        document.getElementById("rainfall").textContent =
+            totalRain.toFixed(1) + " mm";
+
+        document.getElementById("humidity").textContent =
+            avgHumidity === null ? "--" : avgHumidity.toFixed(1) + "%";
+
+        document.getElementById("wind").textContent =
+            avgWind === null ? "--" : avgWind.toFixed(1);
+
+        showChart(
+            keys.map(key => key.slice(4, 6) + "/" + key.slice(6, 8)),
+            temperatures,
+            rainfall
+        );
+
+        status.textContent =
+            "NASA POWER data loaded successfully. " +
+            keys.length + " daily observations processed. " +
+            "Period: " + startDate + " to " + endDate + ".";
+
+    } catch (error) {
+        console.error(error);
+
+        status.textContent =
+            "Unable to load NASA data. Please check your internet connection " +
+            "and try again later. Details: " + error.message;
+    }
+}
+
+loadData();
+</script>
+
+</body>
+</html>
+
