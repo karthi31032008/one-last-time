@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Crop Suitability | FarmShift AI</title>
+
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+
+<style>
+.suitability-page {
+    padding: 35px 0;
+}
+
+.back-link {
+    color: #59df98;
+    text-decoration: none;
+    font-size: 12px;
+}
+
+.page-intro {
+    margin: 30px 0;
+}
+
+.page-intro h1 {
+    font-size: clamp(27px,4vw,39px);
+    margin: 15px 0;
+}
+
+.page-intro h1 span {
+    color: #52df91;
+}
+
+.page-intro p {
+    color: #9bb4a3;
+    line-height: 1.8;
+    font-size: 13px;
+    max-width: 680px;
+}
+
+.source-label {
+    display: inline-block;
+    border: 1px solid #346748;
+    background: #10291b;
+    color: #70e6a5;
+    border-radius: 20px;
+    padding: 8px 13px;
+    font-size: 10px;
+    letter-spacing: 1px;
+}
+
+.analysis-layout {
+    display: grid;
+    grid-template-columns: 1.1fr .9fr;
+    gap: 20px;
+}
+
+.analysis-panel {
+    background: #102319;
+    border: 1px solid #294835;
+    padding: 25px;
+    border-radius: 13px;
+}
+
+.analysis-panel h2 {
+    font-size: 17px;
+    margin-bottom: 8px;
+}
+
+.panel-description {
+    color: #91aa99;
+    font-size: 11px;
+    line-height: 1.7;
+    margin-bottom: 24px;
+}
+
+.field {
+    margin-bottom: 18px;
+}
+
+.field label {
+    display: block;
+    font-size: 11px;
+    color: #a9c0b0;
+    margin-bottom: 9px;
+}
+
+.field input,
+.field select {
+    width: 100%;
+    padding: 13px;
+    background: #091810;
+    color: #e9f5ed;
+    border: 1px solid #31523c;
+    border-radius: 7px;
+    outline: none;
+}
+
+.field input:focus,
+.field select:focus {
+    border-color: #4cdb91;
+}
+
+.analyze-btn {
+    width: 100%;
+    padding: 15px;
+    background: #3bd181;
+    border: none;
+    border-radius: 7px;
+    color: #062012;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.data-card {
+    background: #0c1d14;
+    border: 1px solid #294835;
+    border-radius: 11px;
+    padding: 20px;
+    margin-bottom: 14px;
+}
+
+.data-card small {
+    color: #76a188;
+    font-size: 10px;
+    letter-spacing: 1px;
+}
+
+.data-card h3 {
+    font-size: 17px;
+    margin: 12px 0;
+}
+
+.data-card p {
+    font-size: 11px;
+    line-height: 1.8;
+    color: #91aa99;
+}
+
+.data-status {
+    display: inline-block;
+    font-size: 10px;
+    color: #f3c779;
+    background: #352b18;
+    padding: 7px 10px;
+    border-radius: 5px;
+    margin-top: 13px;
+}
+
+.result-message {
+    display: none;
+    margin-top: 18px;
+    padding: 14px;
+    background: #172d20;
+    color: #a9e8c0;
+    border: 1px solid #416b4d;
+    border-radius: 8px;
+    font-size: 12px;
+    line-height: 1.7;
+}
+
+.method-note {
+    margin-top: 22px;
+    padding: 18px;
+    border-left: 3px solid #45d78c;
+    background: #0c1e14;
+    color: #a3b9aa;
+    font-size: 11px;
+    line-height: 1.8;
+}
+
+@media(max-width:800px) {
+    .analysis-layout {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div class="app">
+
+<aside class="sidebar" id="sidebar">
+
+    <div class="brand">
+        <div class="brand-icon">🌍</div>
+        <div>
+            <h2>FarmShift <span>AI</span></h2>
+            <small>EARTH INTELLIGENCE</small>
+        </div>
+    </div>
+
+    <div class="menu-label">WORKSPACE</div>
+
+    <nav>
+        <a href="/" class="nav-link">◈ Overview</a>
+        <a href="/crop-suitability" class="nav-link active">🌱 Crop Suitability</a>
+        <a href="/#water" class="nav-link">💧 Water Intelligence</a>
+        <a href="/#climate" class="nav-link">☁ Climate Analysis</a>
+        <a href="/#vegetation" class="nav-link">🛰 Land Observation</a>
+        <a href="/#market" class="nav-link">📈 Market Intelligence</a>
+    </nav>
+
+    <div class="sidebar-bottom">
+        <div class="status-dot"></div>
+        <span>FarmShift AI Platform</span>
+    </div>
+
+</aside>
+
+<main class="main">
+
+<header class="topbar">
+    <button class="menu-btn" id="menuBtn">☰</button>
+    <div class="breadcrumb">
+        Intelligence / <span>Crop Suitability</span>
+    </div>
+    <div class="top-right">
+        <span class="live-label">FAO GAEZ MODULE</span>
+        <div class="profile">FS</div>
+    </div>
+</header>
+
+<div class="suitability-page">
+
+<a href="/" class="back-link">← Back to Overview</a>
+
+<div class="page-intro">
+    <span class="source-label">MODULE 01 · AGRO-ECOLOGICAL INTELLIGENCE</span>
+
+    <h1>Crop Suitability <span>Intelligence</span></h1>
+
+    <p>
+        Discover how environmental conditions influence agricultural
+        potential. Evaluate crop requirements through agro-climatic
+        suitability, soil characteristics, water availability and
+        potential productivity.
+    </p>
+</div>
+
+<div class="analysis-layout">
+
+<!-- INPUT PANEL -->
+<div class="analysis-panel">
+
+    <h2>Define Your Agricultural Region</h2>
+
+    <p class="panel-description">
+        Enter your location and proposed crop to prepare
+        a scientific suitability assessment.
+    </p>
+
+    <form id="suitabilityForm">
+
+        <div class="field">
+            <label>Country</label>
+            <select id="country" required>
+                <option value="">Select country</option>
+                <option value="India">India</option>
+                <option value="United States">United States</option>
+                <option value="Other">Other</option>
+            </select>
+        </div>
+
+        <div class="field">
+            <label>State / Region</label>
+            <input id="region" type="text"
+            placeholder="Example: Tamil Nadu" required>
+        </div>
+
+        <div class="field">
+            <label>District / Location</label>
+            <input id="district" type="text"
+            placeholder="Example: Erode" required>
+        </div>
+
+        <div class="field">
+            <label>Proposed Crop</label>
+            <select id="crop" required>
+                <option value="">Select crop</option>
+                <option value="Rice">Rice</option>
+                <option value="Maize">Maize</option>
+                <option value="Millet">Millet</option>
+                <option value="Groundnut">Groundnut</option>
+                <option value="Cotton">Cotton</option>
+                <option value="Soybean">Soybean</option>
+                <option value="Wheat">Wheat</option>
+                <option value="Sorghum">Sorghum</option>
+                <option value="Sugarcane">Sugarcane</option>
+            </select>
+        </div>
+
+        <div class="field">
+            <label>Growing Season</label>
+            <select id="season" required>
+                <option value="">Select season</option>
+                <option value="Kharif">Kharif</option>
+                <option value="Rabi">Rabi</option>
+                <option value="Summer">Summer</option>
+                <option value="Year-round">Year-round</option>
+            </select>
+        </div>
+
+        <button type="submit" class="analyze-btn">
+            Prepare Suitability Assessment →
+        </button>
+
+    </form>
+
+    <div id="resultMessage" class="result-message"></div>
+
+</div>
+
+<!-- SCIENTIFIC INFORMATION -->
+<div>
+
+    <div class="data-card">
+        <small>01 / AGRO-CLIMATIC CONDITIONS</small>
+        <h3>Climate Compatibility</h3>
+        <p>
+            Assess temperature, rainfall and growing-period
+            requirements against available agro-climatic information.
+        </p>
+        <span class="data-status">Dataset integration pending</span>
+    </div>
+
+    <div class="data-card">
+        <small>02 / SOIL CONSTRAINTS</small>
+        <h3>Soil Suitability</h3>
+        <p>
+            Examine soil-related limitations and crop-specific
+            environmental requirements.
+        </p>
+        <span class="data-status">Dataset integration pending</span>
+    </div>
+
+    <div class="data-card">
+        <small>03 / WATER RESOURCES</small>
+        <h3>Water Availability</h3>
+        <p>
+            Assess water requirements and available water indicators
+            for proposed crop systems.
+        </p>
+        <span class="data-status">Dataset integration pending</span>
+    </div>
+
+    <div class="data-card">
+        <small>04 / PRODUCTIVITY</small>
+        <h3>Yield Potential</h3>
+        <p>
+            Examine potential productivity using verified
+            agro-ecological assessment data.
+        </p>
+        <span class="data-status">Dataset integration pending</span>
+    </div>
+
+</div>
+</div>
+
+<div class="method-note">
+    <strong>Scientific methodology:</strong>
+    FAO Global Agro-Ecological Zones (GAEZ).
+    Suitability results will be generated only after the relevant
+    dataset, geographic coverage and crop-specific parameters
+    have been verified. This initial page does not generate
+    actual suitability scores.
+</div>
+
+</div>
+
+</main>
+</div>
+
+<script src="{{ url_for('static', filename='js/app.js') }}"></script>
+
+<script>
+document.getElementById("suitabilityForm").addEventListener("submit", function(e) {
+    e.preventDefault();
+
+    const country = document.getElementById("country").value;
+    const region = document.getElementById("region").value.trim();
+    const district = document.getElementById("district").value.trim();
+    const crop = document.getElementById("crop").value;
+    const season = document.getElementById("season").value;
+
+    const result = document.getElementById("resultMessage");
+
+    result.style.display = "block";
+
+    result.textContent =
+        "Input received for " + crop + " in " +
+        district + ", " + region + ", " + country +
+        ". Growing season: " + season +
+        ". Scientific suitability results are not yet available. " +
+        "The verified GAEZ dataset connection is the next development step.";
+});
+</script>
+
+</body>
+</html>
+
