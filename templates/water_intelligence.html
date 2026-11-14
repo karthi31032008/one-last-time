@@ -1,1 +1,99 @@
 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Water Intelligence | FarmShift AI</title>
+
+<style>
+*{box-sizing:border-box}
+body{
+margin:0;background:#061722;color:#e8faff;
+font-family:Arial,sans-serif;padding:25px
+}
+main{max-width:1000px;margin:auto}
+h1{color:#42d9f5}
+.panel{
+background:#102b3a;padding:22px;
+border:1px solid #24617b;border-radius:15px;
+margin:20px 0
+}
+input,button{
+padding:13px;margin:7px 0;
+width:100%;border-radius:8px;border:0
+}
+button{background:#20c5e7;font-weight:bold;cursor:pointer}
+.metric{font-size:30px;color:#55e8f7}
+small{color:#b5d4df}
+</style>
+</head>
+
+<body>
+<main>
+<h1>💧 Water Intelligence</h1>
+<p>Satellite-based precipitation monitoring</p>
+
+<section class="panel">
+<h3>Field Coordinates</h3>
+<input id="lat" type="number" step="any"
+placeholder="Latitude" value="11.0168">
+<input id="lon" type="number" step="any"
+placeholder="Longitude" value="76.9558">
+
+<button onclick="loadWater()">Analyze Water Data</button>
+<div id="result">Waiting for NASA data...</div>
+</section>
+
+</main>
+
+<script>
+async function loadWater(){
+const lat=document.getElementById("lat").value;
+const lon=document.getElementById("lon").value;
+const result=document.getElementById("result");
+
+if(!lat || !lon){
+result.innerText="Enter coordinates";
+return;
+}
+
+result.innerText="Connecting to NASA POWER...";
+
+try{
+const end=new Date();
+end.setUTCDate(end.getUTCDate()-5);
+const start=new Date(end);
+start.setUTCDate(start.getUTCDate()-29);
+
+const fmt=d=>d.toISOString().slice(0,10).replaceAll("-","");
+const url=`https://power.larc.nasa.gov/api/temporal/daily/point?parameters=PRECTOTCORR&community=AG&longitude=${encodeURIComponent(lon)}&latitude=${encodeURIComponent(lat)}&start=${fmt(start)}&end=${fmt(end)}&format=JSON`;
+
+const response=await fetch(url);
+if(!response.ok)throw Error("NASA API unavailable");
+
+const json=await response.json();
+const values=Object.values(json.properties.parameter.PRECTOTCORR)
+.filter(v=>Number.isFinite(v)&&v>=0);
+
+if(!values.length)throw Error("No precipitation data");
+
+const total=values.reduce((a,b)=>a+b,0);
+const avg=total/values.length;
+
+result.innerHTML=`
+<h2>NASA Precipitation Analysis</h2>
+<div class="metric">${total.toFixed(2)} mm</div>
+<p>30-day accumulated precipitation (available days)</p>
+<p>Daily average: ${avg.toFixed(2)} mm/day</p>
+<p>Valid observations: ${values.length}</p>
+<small>Source: NASA POWER API | Historical daily data</small>
+`;
+}catch(e){
+result.innerText="Data error: "+e.message;
+}
+}
+</script>
+</body>
+</html>
+
