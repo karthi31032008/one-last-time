@@ -19,6 +19,13 @@ if not firebase_admin._apps:
 
 db = firestore.client()
 print("Firebase connected successfully!")
+try:
+    db.collection("connection_test").document("test").set({
+        "status": "connected"
+    })
+    print("FIREBASE DATABASE CONNECTED")
+except Exception as e:
+    print("FIREBASE DATABASE ERROR:", e)
 
 # SECURITY
 app.config["SECRET_KEY"] = os.environ.get(
