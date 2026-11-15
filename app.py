@@ -42,9 +42,16 @@ GAEZ_DATA_FILE = Path("data/gaez/crop_suitability.json")
 
 
 # HOME PAGE
-@app.route("/")
-def home():
-    return render_template("index.html")
+# ROBOTS.TXT - ALLOW SEARCH ENGINE CRAWLING
+
+@app.route("/robots.txt")
+def robots_txt():
+    return (
+        "User-agent: *\n"
+        "Allow: /\n"
+    ), 200, {
+        "Content-Type": "text/plain"
+    }
 
 
 # HEALTH CHECK
