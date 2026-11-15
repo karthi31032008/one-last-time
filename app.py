@@ -341,6 +341,212 @@ def gaez_detect():
 
 
 # ==========================================
+# FARM SHIFT AI - INTEGRATED CROP ASSESSMENT
+# Uses existing NASA POWER, SoilGrids,
+# NASA SMAP, India-WRIS and FAO GAEZ resources
+# ==========================================
+
+@app.route("/api/crop-suitability-assessment", methods=["POST"])
+def crop_suitability_assessment():
+
+    data = request.get_json(silent=True) or {}
+
+    try:
+        lat = float(data.get("latitude"))
+        lon = float(data.get("longitude"))
+    except (TypeError, ValueError):
+        return jsonify({
+            "status": "error",
+            "message": "Valid latitude and longitude are required."
+        }), 400
+
+    if not (-90 <= lat <= 90 and -180 <= lon <= 180):
+        return jsonify({
+            "status": "error",
+            "message": "Invalid coordinates."
+        }), 400
+
+    crop = str(data.get("crop", "")).strip()
+    season = str(data.get("season", "")).strip()
+
+    if not crop:
+        return jsonify({
+            "status": "error",
+            "message": "Please select a crop."
+        }), 400
+
+    result = {
+        "status": "partial",
+        "application": "FarmShift AI",
+        "crop": crop,
+        "season": season,
+        "location": {
+            "latitude": lat,
+            "longitude": lon
+        },
+        "modules": {}
+    }
+
+    # --------------------------------------
+    # 01. CLIMATE COMPATIBILITY - NASA POWER
+    # --------------------------------------
+
+    try:
+        end_date = datetime.now(timezone.utc).date() - timedelta(days=5)
+        start_date = end_date - timedelta(days=29)
+
+        params = {
+            "parameters": "T2M,PRECTOTCORR,RH2M",
+            "community": "AG",
+            "longitude": lon,
+            "latitude": lat,
+            "start": start_date.strftime("%Y%m%d"),
+            "end": end_date.strftime("%Y%m%d"),
+            "format": "JSON"
+        }
+
+        response = requests.get(
+            "https://power.larc.nasa.gov/api/temporal/daily/point",
+            params=params,
+            timeout=30
+        )
+
+        response.raise_for_status()
+
+        nasa = response.json()
+        climate = nasa.get(
+            "properties", {}
+        ).get("parameter", {})
+
+        def valid_values(values):
+            return [
+                float(v)
+                for v in values.values()
+                if isinstance(v, (int, float))
+                and v > -900
+            ]
+
+        temperatures = valid_values(climate.get("T2M", {}))
+        rainfall = valid_values(climate.get("PRECTOTCORR", {}))
+        humidity = valid_values(climate.get("RH2M", {}))
+
+        if temperatures and rainfall and humidity:
+
+            result["modules"]["climate"] = {
+                "status": "available",
+                "source": "NASA POWER",
+                "average_temperature_c": round(
+                    sum(temperatures) / len(temperatures), 2
+                ),
+                "total_rainfall_mm": round(
+                    sum(rainfall), 2
+                ),
+                "average_humidity_percent": round(
+                    sum(humidity) / len(humidity), 2
+                ),
+                "period": {
+                    "start": start_date.isoformat(),
+                    "end": end_date.isoformat()
+                }
+            }
+
+        else:
+            result["modules"]["climate"] = {
+                "status": "unavailable",
+                "source": "NASA POWER",
+                "message": "Climate observations unavailable."
+            }
+
+    except requests.RequestException as e:
+        logger.warning("NASA POWER assessment failed: %s", e)
+
+        result["modules"]["climate"] = {
+            "status": "unavailable",
+            "source": "NASA POWER",
+            "message": "NASA POWER service unavailable."
+        }
+
+    # --------------------------------------
+    # 02. SOIL SUITABILITY - SOILGRIDS
+    # --------------------------------------
+
+    result["modules"]["soil"] = {
+        "status": "pending",
+        "source": "ISRIC SoilGrids",
+        "message": (
+            "Soil property integration requires an operational "
+            "SoilGrids service or downloaded SoilGrids raster data."
+        ),
+        "properties": [
+            "Soil pH",
+            "Soil organic carbon",
+            "Clay",
+            "Sand",
+            "Silt"
+        ]
+    }
+
+    # --------------------------------------
+    # 03. WATER AVAILABILITY
+    # NASA SMAP + INDIA-WRIS
+    # --------------------------------------
+
+    result["modules"]["water"] = {
+        "status": "pending",
+        "sources": [
+            "NASA SMAP",
+            "India-WRIS"
+        ],
+        "message": (
+            "Water analysis requires an accessible SMAP product "
+            "and the corresponding India-WRIS data connection."
+        ),
+        "indicators": [
+            "Surface soil moisture",
+            "Water resource availability",
+            "Soil moisture variation"
+        ]
+    }
+
+    # --------------------------------------
+    # 04. YIELD POTENTIAL - FAO GAEZ
+    # --------------------------------------
+
+    if GAEZ_DATA_FILE.is_file():
+
+        result["modules"]["yield"] = {
+            "status": "dataset_detected",
+            "source": "FAO GAEZ",
+            "dataset_available": True,
+            "message": (
+                "GAEZ dataset detected. Crop-specific spatial "
+                "lookup requires verification of the dataset schema."
+            )
+        }
+
+    else:
+
+        result["modules"]["yield"] = {
+            "status": "pending",
+            "source": "FAO GAEZ",
+            "dataset_available": False,
+            "message": "GAEZ dataset file not found."
+        }
+
+    # --------------------------------------
+    # FINAL ASSESSMENT STATUS
+    # --------------------------------------
+
+    result["message"] = (
+        "Assessment completed with available observations. "
+        "Unavailable datasets are reported separately."
+    )
+
+    return jsonify(result), 200
+
+
+
+# ==========================================
 # FARM SHIFT AI - NASA CROP CLIMATE API
 # Data Source: NASA POWER
 # ==========================================
