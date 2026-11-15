@@ -11,6 +11,15 @@ from firebase_admin import credentials, firestore
 from flask import Flask, render_template, jsonify, request
 
 app = Flask(__name__)
+
+# PUBLIC WEBSITE RESPONSE HEADERS
+
+@app.after_request
+def public_response_headers(response):
+
+    response.headers["X-Robots-Tag"] = "all"
+
+    return response
 # FIREBASE ADMIN CONNECTION
 if not firebase_admin._apps:
     cred = credentials.Certificate(
