@@ -676,3 +676,22 @@ a {
     box-shadow: 0 8px 25px rgba(239, 68, 68, 0.4);
     transform: translateY(-2px);
 }
+/* AGRICULTURAL OUTLOOK - RED BUTTON */
+
+#marketButton {
+    background: linear-gradient(135deg, #EF4444, #DC2626);
+    color: #FFFFFF;
+    border: 1px solid #F87171;
+    box-shadow: 0 5px 18px rgba(239, 68, 68, 0.3);
+    transition: all 0.3s ease;
+}
+
+#marketButton:hover {
+    background: linear-gradient(135deg, #F87171, #B91C1C);
+    box-shadow: 0 8px 25px rgba(239, 68, 68, 0.45);
+    transform: translateY(-2px);
+}
+
+#marketButton:active {
+    transform: scale(0.97);
+}
