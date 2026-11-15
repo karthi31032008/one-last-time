@@ -305,6 +305,27 @@
                 <option value="Year-round">Year-round</option>
             </select>
         </div>
+        
+        <div class="field">
+            <label>Latitude</label>
+            <input id="latitude" type="number"
+                   step="any" placeholder="Example: 11.3410"
+                   required>
+        </div>
+
+        <div class="field">
+            <label>Longitude</label>
+            <input id="longitude" type="number"
+                   step="any" placeholder="Example: 77.7172"
+                   required>
+        </div>
+
+        <button type="button" class="analyze-btn"
+                id="locationBtn"
+                style="margin-bottom:18px;">
+            📍 Detect My Location
+        </button>
+
 
         <button type="submit" class="analyze-btn">
             Prepare Suitability Assessment →
@@ -441,6 +462,37 @@ document.getElementById("suitabilityForm").addEventListener("submit", async func
     }
 });
 </script>
+
+    
+document.getElementById("locationBtn").addEventListener("click", function () {
+
+    const message = document.getElementById("resultMessage");
+
+    if (!navigator.geolocation) {
+        message.textContent = "Geolocation is not supported.";
+        return;
+    }
+
+    message.textContent = "Detecting your location...";
+
+    navigator.geolocation.getCurrentPosition(
+        function (position) {
+
+            document.getElementById("latitude").value =
+                position.coords.latitude;
+
+            document.getElementById("longitude").value =
+                position.coords.longitude;
+
+            message.textContent = "Location detected successfully!";
+        },
+        function (error) {
+            message.textContent =
+                "Location access denied. Please enter coordinates manually.";
+        }
+    );
+});
+
 </body>
 </html>
 
