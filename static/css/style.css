@@ -409,3 +409,256 @@ footer {
         font-size: 8px;
     }
 }
+
+/* ==========================================
+   FARMSHIFT AI - MIDNIGHT EARTH THEME
+   ========================================== */
+
+:root {
+    --bg-main: #0B1220;
+    --bg-sidebar: #0D1726;
+    --bg-card: #172438;
+    --bg-card-hover: #20334B;
+    --accent-aqua: #24B8B5;
+    --accent-gold: #F5B84B;
+    --accent-coral: #E87962;
+    --accent-violet: #A78BFA;
+    --text-main: #EAF1F5;
+    --text-muted: #A7B6C8;
+    --border-color: #30445B;
+}
+
+/* MAIN BACKGROUND */
+
+body {
+    background: var(--bg-main);
+    color: var(--text-main);
+}
+
+.sidebar {
+    background: var(--bg-sidebar);
+    border-right-color: var(--border-color);
+}
+
+.main {
+    background: var(--bg-main);
+}
+
+/* BRAND */
+
+.brand h2 span {
+    color: var(--accent-aqua);
+}
+
+.brand small,
+.menu-label {
+    color: #8195AD;
+}
+
+/* NAVIGATION */
+
+.nav-link {
+    color: var(--text-muted);
+}
+
+.nav-link:hover,
+.nav-link.active {
+    background: #1C3045;
+    color: var(--accent-aqua);
+}
+
+.status-dot {
+    background: var(--accent-aqua);
+}
+
+/* TOPBAR */
+
+.topbar {
+    border-bottom-color: var(--border-color);
+}
+
+.breadcrumb {
+    color: #91A5BA;
+}
+
+.breadcrumb span {
+    color: var(--text-main);
+}
+
+.live-label {
+    color: var(--accent-gold);
+}
+
+.profile {
+    background: #263A52;
+    color: var(--accent-aqua);
+}
+
+/* HERO SECTION */
+
+.hero {
+    border-color: #30445B;
+
+    background:
+        radial-gradient(
+            ellipse at 80% 40%,
+            #174C5A 0%,
+            transparent 55%
+        ),
+        linear-gradient(
+            120deg,
+            #14243A,
+            #0D1726
+        );
+}
+
+.eyebrow {
+    color: var(--accent-aqua);
+}
+
+.hero h1 span {
+    color: var(--accent-gold);
+}
+
+.hero p {
+    color: var(--text-muted);
+}
+
+.earth {
+    filter: drop-shadow(0 0 35px #24B8B5);
+}
+
+.orbit {
+    border-color: #3CBBB5;
+}
+
+.orbit-label {
+    color: var(--accent-aqua);
+}
+
+/* BUTTONS */
+
+.primary-btn {
+    background: var(--accent-aqua);
+    color: #071B25;
+    transition: .25s;
+}
+
+.primary-btn:hover {
+    background: #48D1CB;
+    transform: translateY(-2px);
+}
+
+/* SECTION HEADINGS */
+
+.section-heading small {
+    color: var(--accent-gold);
+}
+
+.section-tag {
+    color: #91A5BA;
+}
+
+/* MODULE CARDS */
+
+.module-card {
+    background: var(--bg-card);
+    border-color: var(--border-color);
+    color: var(--text-main);
+}
+
+.module-card:hover {
+    background: var(--bg-card-hover);
+    border-color: var(--accent-aqua);
+    box-shadow: 0 10px 30px rgba(36,184,181,.10);
+}
+
+.module-number {
+    color: #91A5BA;
+}
+
+.module-card p {
+    color: var(--text-muted);
+}
+
+.module-link {
+    color: var(--accent-aqua);
+}
+
+/* MODULE ACCENT COLORS */
+
+.green {
+    background: #173B3E;
+    color: var(--accent-aqua);
+}
+
+.blue {
+    background: #183B59;
+    color: #62B9F0;
+}
+
+.orange {
+    background: #493421;
+    color: var(--accent-gold);
+}
+
+.purple {
+    background: #352B50;
+    color: var(--accent-violet);
+}
+
+.yellow {
+    background: #46391F;
+    color: #F5C96B;
+}
+
+.cyan {
+    background: #173D48;
+    color: #65D5E8;
+}
+
+/* DETAIL SECTIONS */
+
+.detail-section {
+    border-top-color: var(--border-color);
+}
+
+.detail-section p {
+    color: var(--text-muted);
+}
+
+.placeholder {
+    background: var(--bg-card);
+    border-color: #52677F;
+    color: #A7B6C8;
+}
+
+/* FOOTER */
+
+footer {
+    border-top-color: var(--border-color);
+    color: #8195AD;
+}
+
+/* MOBILE MENU */
+
+.menu-btn {
+    color: var(--text-main);
+}
+
+/* GLOBAL POLISH */
+
+input,
+select,
+textarea {
+    accent-color: var(--accent-aqua);
+}
+
+::selection {
+    background: var(--accent-aqua);
+    color: #071B25;
+}
+
+a {
+    transition: .2s ease;
+}
