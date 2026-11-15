@@ -662,3 +662,17 @@ textarea {
 a {
     transition: .2s ease;
 }
+/* CROP OUTLOOK ANALYZER BUTTON */
+#generateOutlookBtn {
+    background: linear-gradient(135deg, #EF4444, #DC2626);
+    color: #FFFFFF;
+    border: 1px solid #F87171;
+    box-shadow: 0 5px 18px rgba(239, 68, 68, 0.25);
+    transition: all 0.3s ease;
+}
+
+#generateOutlookBtn:hover {
+    background: linear-gradient(135deg, #F87171, #B91C1C);
+    box-shadow: 0 8px 25px rgba(239, 68, 68, 0.4);
+    transform: translateY(-2px);
+}
