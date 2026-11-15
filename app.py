@@ -8,7 +8,7 @@ import requests
 import firebase_admin
 from firebase_admin import credentials, firestore
 
-from flask import Flask, render_template, jsonify, request
+from flask import Flask, render_template, jsonify, request, redirect
 
 app = Flask(__name__)
 
