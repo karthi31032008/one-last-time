@@ -464,19 +464,30 @@ document.getElementById("suitabilityForm").addEventListener("submit", async func
 </script>
 
     
+
 <script>
+
+// LOCATION DETECTION
 document.getElementById("locationBtn").addEventListener("click", function () {
 
     const message = document.getElementById("resultMessage");
+
+    message.style.display = "block";
 
     if (!navigator.geolocation) {
         message.textContent = "Geolocation is not supported.";
         return;
     }
 
+    if (!window.isSecureContext) {
+        message.textContent = "Location requires a secure HTTPS connection.";
+        return;
+    }
+
     message.textContent = "Detecting your location...";
 
     navigator.geolocation.getCurrentPosition(
+
         function (position) {
 
             document.getElementById("latitude").value =
@@ -485,15 +496,126 @@ document.getElementById("locationBtn").addEventListener("click", function () {
             document.getElementById("longitude").value =
                 position.coords.longitude;
 
-            message.textContent = "Location detected successfully!";
-        },
-        function (error) {
             message.textContent =
-                "Location access denied. Please enter coordinates manually.";
+                "Location detected successfully!";
+
+        },
+
+        function (error) {
+
+            if (error.code === 1) {
+                message.textContent =
+                    "Location permission denied. Allow location in Chrome settings.";
+            }
+            else if (error.code === 2) {
+                message.textContent =
+                    "Location unavailable. Check Windows location settings.";
+            }
+            else if (error.code === 3) {
+                message.textContent =
+                    "Location request timed out. Please try again.";
+            }
+            else {
+                message.textContent =
+                    "Unable to detect location.";
+            }
+
+        },
+
+        {
+            enableHighAccuracy: true,
+            timeout: 20000,
+            maximumAge: 0
         }
     );
+
 });
+
+
+// CROP SUITABILITY FORM
+document.getElementById("suitabilityForm").addEventListener("submit", async function(e) {
+
+    e.preventDefault();
+
+    const country = document.getElementById("country").value;
+    const region = document.getElementById("region").value.trim();
+    const district = document.getElementById("district").value.trim();
+    const crop = document.getElementById("crop").value;
+    const season = document.getElementById("season").value;
+
+    const lat = parseFloat(document.getElementById("latitude").value);
+    const lon = parseFloat(document.getElementById("longitude").value);
+
+    const result = document.getElementById("resultMessage");
+
+    result.style.display = "block";
+
+    if (!Number.isFinite(lat) || lat < -90 || lat > 90 ||
+        !Number.isFinite(lon) || lon < -180 || lon > 180) {
+
+        result.textContent =
+            "Please enter valid Latitude and Longitude or detect your location.";
+
+        return;
+    }
+
+    result.textContent =
+        "Fetching climate observations from NASA POWER...";
+
+    try {
+
+        const response = await fetch(
+            `/api/crop-climate?lat=${encodeURIComponent(lat)}&lon=${encodeURIComponent(lon)}`
+        );
+
+        const data = await response.json();
+
+        if (!response.ok || data.status !== "success") {
+            throw new Error(data.message || "Climate data unavailable");
+        }
+
+        const climate = data.climate;
+
+        result.innerHTML = `
+            <strong>NASA POWER Climate Assessment</strong><br><br>
+
+            Location: ${district}, ${region}, ${country}<br>
+            Latitude: ${lat}<br>
+            Longitude: ${lon}<br>
+            Proposed crop: ${crop}<br>
+            Growing season: ${season}<br><br>
+
+            <strong>Average Temperature:</strong>
+            ${climate.average_temperature_c} °C<br>
+
+            <strong>Total Rainfall:</strong>
+            ${climate.total_rainfall_mm} mm<br>
+
+            <strong>Average Humidity:</strong>
+            ${climate.average_humidity_percent}%<br><br>
+
+            <strong>Data Source:</strong> NASA POWER<br>
+            <strong>Period:</strong>
+            ${data.period.start} to ${data.period.end}<br><br>
+
+            Climate observations retrieved successfully.
+            This is not an official crop suitability score.
+            GAEZ and SoilGrids integration is still pending.
+        `;
+
+    } catch (error) {
+
+        result.textContent =
+            "Unable to retrieve NASA POWER climate data: " + error.message;
+
+    }
+
+});
+
 </script>
+</body>
+</html>
+
 
 </body>
 </html>
